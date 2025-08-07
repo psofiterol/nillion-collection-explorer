@@ -568,6 +568,7 @@ export default function CollectionDetailPage() {
               </button>
               <button
                 onClick={() => setShowAddDataModal(true)}
+                data-umami-event="create-record"
                 className="px-4 py-2 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium tracking-wide shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
               >
                 Add Data
@@ -606,6 +607,7 @@ export default function CollectionDetailPage() {
               </p>
               <button
                 onClick={() => setShowAddDataModal(true)}
+                data-umami-event="create-record"
                 className="px-6 py-2 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium tracking-wide shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
               >
                 Add First Record
@@ -721,6 +723,7 @@ export default function CollectionDetailPage() {
                             </button>
                             <button
                               onClick={() => handleDelete(record._id)}
+                              data-umami-event="delete-record"
                               className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
                               title="Delete record"
                             >

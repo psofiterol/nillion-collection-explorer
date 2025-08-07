@@ -483,6 +483,7 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
           <button
             onClick={handleSubmit}
             disabled={submitting}
+            data-umami-event="update-record"
             className="px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-none hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300 font-medium tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
           >
             {submitting ? 'Updating...' : 'Update Record'}
