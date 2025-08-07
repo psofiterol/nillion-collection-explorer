@@ -1,0 +1,22 @@
+/* Sticky column shadows */
+.sticky.left-0 {
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+.sticky.right-0 {
+  box-shadow: -2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode shadows */
+.dark .sticky.left-0 {
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.3);
+}
+
+.dark .sticky.right-0 {
+  box-shadow: -2px 0 5px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure hover states work properly on sticky columns */
+tr:hover .sticky {
+  background-color: inherit;
+}
