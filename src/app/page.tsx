@@ -31,7 +31,7 @@ export default function HomePage() {
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <button
-                onClick={() => router.push('/create-collection')}
+                onClick={() => router.push('/collections')}
                 className="group px-10 py-4 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium text-lg tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 <span className="flex items-center">
