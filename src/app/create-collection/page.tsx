@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CollectionForm from '@/components/CollectionForm';
 import { Collection } from '@/types';
@@ -10,6 +10,7 @@ import { apiFetch } from '@/lib/api-client';
 export default function CreateCollectionPage() {
   const router = useRouter();
   const { addNotification } = useNotifications();
+  const [isCreating, setIsCreating] = useState(false);
 
   const handleCreateCollection = async (
     collectionData: Omit<
@@ -17,6 +18,7 @@ export default function CreateCollectionPage() {
       '_id' | 'createdAt' | 'updatedAt' | 'description'
     >
   ) => {
+    setIsCreating(true);
     try {
       const response = await apiFetch('/api/collections', {
         method: 'POST',
@@ -50,7 +52,7 @@ export default function CreateCollectionPage() {
         title: 'Failed to create collection',
         message: `Could not create collection "${collectionData.name}": ${errorMessage}`,
       });
-      throw error; // Re-throw to let CollectionForm handle loading state
+      setIsCreating(false); // Reset loading state on error
     }
   };
 
@@ -82,6 +84,7 @@ export default function CreateCollectionPage() {
             <CollectionForm
               onSubmit={handleCreateCollection}
               onCancel={handleCancel}
+              isLoading={isCreating}
             />
           </Suspense>
         </div>

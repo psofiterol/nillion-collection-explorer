@@ -62,6 +62,7 @@ export default function CollectionForm({
   const [showSchemaPreview, setShowSchemaPreview] = useState(false);
   const [jsonSchema, setJsonSchema] = useState('');
   const [jsonError, setJsonError] = useState<string | null>(null);
+  const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
 
   // Sync active tab with URL params
   useEffect(() => {
@@ -89,6 +90,19 @@ export default function CollectionForm({
   // Helper to generate unique IDs
   const generateFieldId = () =>
     `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+  // Toggle field details expansion
+  const toggleFieldExpansion = (fieldId: string) => {
+    setExpandedFields(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(fieldId)) {
+        newSet.delete(fieldId);
+      } else {
+        newSet.add(fieldId);
+      }
+      return newSet;
+    });
+  };
 
   const addField = (parentPath?: string) => {
     const newField: FieldDefinition = {
@@ -261,10 +275,7 @@ export default function CollectionForm({
         type: 'object',
         properties: {
           '%share': {
-            type:
-              field.type === 'object' || field.type === 'array'
-                ? 'string'
-                : field.type,
+            type: 'string', // Secret fields are always strings
           },
         },
         required: ['%share'],
@@ -449,8 +460,17 @@ export default function CollectionForm({
     return (
       <div
         key={field.id}
-        className={`p-4 border border-gray-200 dark:border-gray-600 rounded-lg ${indentClass}`}
+        className={`relative p-4 border border-gray-200 dark:border-gray-600 rounded-lg ${indentClass}`}
       >
+        {field.id !== 'field-0' && (
+          <button
+            type="button"
+            onClick={() => removeField(field.id)}
+            className="absolute top-2 right-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded transition-colors duration-200"
+          >
+            Remove
+          </button>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Field Name</label>
@@ -464,14 +484,21 @@ export default function CollectionForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Type</label>
+            <label className="block text-sm font-medium mb-1">
+              Type
+              {field.isSecret && (
+                <span className="text-xs text-amber-600 dark:text-amber-400 ml-2">
+                  (string for secret fields)
+                </span>
+              )}
+            </label>
             <select
               value={field.type}
               onChange={(e) =>
                 updateField(field.id, { type: e.target.value as any })
               }
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-              disabled={field.id === 'field-0'} // _id type is locked to string
+              disabled={field.id === 'field-0' || field.isSecret} // _id type is locked to string, and secret fields must be string
             >
               <option value="string">String</option>
               <option value="number">Number</option>
@@ -500,9 +527,17 @@ export default function CollectionForm({
               <input
                 type="checkbox"
                 checked={field.isSecret}
-                onChange={(e) =>
-                  updateField(field.id, { isSecret: e.target.checked })
-                }
+                onChange={(e) => {
+                  if (e.target.checked && field.type !== 'string') {
+                    // Automatically convert to string when marking as secret
+                    updateField(field.id, { 
+                      isSecret: true, 
+                      type: 'string' 
+                    });
+                  } else {
+                    updateField(field.id, { isSecret: e.target.checked });
+                  }
+                }}
                 className="mr-2"
                 disabled={
                   field.id === 'field-0' ||
@@ -511,37 +546,42 @@ export default function CollectionForm({
                 } // Objects/arrays can't be directly secret
               />
               <span className="text-sm">Secret</span>
+              {field.type !== 'string' && !field.isSecret && (
+                <span className="text-xs text-gray-500 dark:text-gray-400 ml-1" title="Secret fields must be strings">
+                  (will convert to string)
+                </span>
+              )}
             </label>
-          </div>
 
-          <div className="flex items-end">
-            {field.id !== 'field-0' && (
-              <button
-                type="button"
-                onClick={() => removeField(field.id)}
-                className="px-3 py-1 text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors duration-300 font-medium"
-              >
-                Remove
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => toggleFieldExpansion(field.id)}
+              className="mt-2 text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors duration-300 font-medium flex items-center gap-1"
+            >
+              <span className="text-xs">{expandedFields.has(field.id) ? '▼' : '▶'}</span>
+              <span className="whitespace-nowrap">Optional: description and details</span>
+            </button>
           </div>
         </div>
 
-        <div className="mt-2">
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <input
-            type="text"
-            value={field.description}
-            onChange={(e) =>
-              updateField(field.id, { description: e.target.value })
-            }
-            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-            placeholder="Optional field description"
-          />
-        </div>
+        {/* Collapsible additional details section */}
+        {expandedFields.has(field.id) && (
+          <>
+            <div className="mt-2">
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <input
+                type="text"
+                value={field.description}
+                onChange={(e) =>
+                  updateField(field.id, { description: e.target.value })
+                }
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
+                placeholder="Optional field description"
+              />
+            </div>
 
-        {/* Type-specific constraints */}
-        <div className="mt-3">
+            {/* Type-specific constraints */}
+            <div className="mt-3">
           {field.type === 'string' && field.id !== 'field-0' && (
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -664,16 +704,23 @@ export default function CollectionForm({
               </div>
             </div>
           )}
-        </div>
+            </div>
+          </>
+        )}
 
         {field.isSecret &&
           field.type !== 'object' &&
           field.type !== 'array' && (
-            <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded text-sm">
-              <p className="text-gray-800 dark:text-gray-200">
+            <div className="mt-2 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded text-sm">
+              <p className="text-amber-800 dark:text-amber-200">
                 🔒 This field will be encrypted using secret sharing across
                 multiple nodes.
               </p>
+              {field.type !== 'string' && (
+                <p className="text-amber-600 dark:text-amber-300 mt-1 font-medium">
+                  ⚠️ Note: Secret fields must be strings. This field's type has been automatically converted to string.
+                </p>
+              )}
             </div>
           )}
 
@@ -888,9 +935,35 @@ export default function CollectionForm({
             type="submit"
             disabled={isLoading}
             data-umami-event={activeTab === 'build' ? 'create-collection-custom' : 'create-collection-from-json'}
-            className="flex-1 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-none hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300 font-medium tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
+            className="flex-1 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-none hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300 font-medium tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg disabled:hover:bg-gray-900 dark:disabled:hover:bg-gray-100 min-h-[48px] flex items-center justify-center"
           >
-            {isLoading ? 'Creating...' : 'Create Collection'}
+            {isLoading ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white dark:text-gray-900"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Creating Collection...
+              </span>
+            ) : (
+              'Create Collection'
+            )}
           </button>
           <button
             type="button"

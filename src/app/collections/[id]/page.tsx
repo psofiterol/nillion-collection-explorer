@@ -441,7 +441,7 @@ export default function CollectionDetailPage() {
                   </h1>
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-gray-500 dark:text-gray-400 font-mono">
-                      {collection._id}
+                      Collection ID: {collection._id}
                     </span>
                     <button
                       onClick={() => {

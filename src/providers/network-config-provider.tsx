@@ -1,13 +1,13 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { TESTNET_CONFIG, MAINNET_CONFIG } from '@/lib/network-config';
+import { TESTNET_CONFIG } from '@/lib/network-config';
 
 export type NetworkConfigType = typeof TESTNET_CONFIG & {
   NILLION_API_KEY: string;
 };
 
-export type PresetType = 'testnet' | 'mainnet' | 'custom';
+export type PresetType = 'testnet' | 'custom';
 
 interface NetworkConfigContextType {
   currentConfig: NetworkConfigType;
@@ -28,7 +28,6 @@ const DEFAULT_CONFIG: NetworkConfigType = {
 
 export const PRESET_CONFIGS = {
   testnet: TESTNET_CONFIG,
-  mainnet: MAINNET_CONFIG,
 };
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
@@ -49,7 +48,7 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
       }
     }
     
-    if (savedPreset && ['testnet', 'mainnet', 'custom'].includes(savedPreset)) {
+    if (savedPreset && ['testnet', 'custom'].includes(savedPreset)) {
       setCurrentPreset(savedPreset);
     }
   }, []);

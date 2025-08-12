@@ -144,17 +144,6 @@ export function SettingsModal({
               </button>
               <button
                 type="button"
-                onClick={() => handlePresetChange('mainnet')}
-                className={`px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 ${
-                  selectedPreset === 'mainnet'
-                    ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
-                    : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-gray-100'
-                }`}
-              >
-                Mainnet
-              </button>
-              <button
-                type="button"
                 onClick={() => handlePresetChange('custom')}
                 className={`px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 ${
                   selectedPreset === 'custom'
@@ -275,6 +264,11 @@ export function SettingsModal({
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Stored in localStorage for development only
               </p>
+              <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded text-xs">
+                <p className="text-yellow-800 dark:text-yellow-200 font-medium">
+                  ⚠️ Warning: This tool is for testing purposes only. Only use Testnet API keys.
+                </p>
+              </div>
             </div>
           </div>
 
