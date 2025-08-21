@@ -1,12 +1,12 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import ClientProviders from '@/components/ClientProviders';
-import { NavbarClient } from './navbar-client';
+import type { Metadata } from "next";
+import "./globals.css";
+import ClientProviders from "@/components/ClientProviders";
+import { NavbarClient } from "./navbar-client";
 
 export const metadata: Metadata = {
-  title: 'Nillion Storage Tools',
+  title: "Nillion Collection Explorer",
   description:
-    'Demo UI for creating and managing Nillion secretvaults collections',
+    "Demo UI for creating and managing Nillion secretvaults collections",
 };
 
 export default function RootLayout({
@@ -17,7 +17,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="d13cfe55-48d4-40bb-a481-e55dc812395b"></script>
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="d13cfe55-48d4-40bb-a481-e55dc812395b"
+        ></script>
       </head>
       <body className="antialiased">
         <ClientProviders>
@@ -30,7 +34,7 @@ export default function RootLayout({
                       href="/"
                       className="text-2xl font-light tracking-tight text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-300 transition-all duration-300"
                     >
-                      Nillion Storage Tools
+                      Nillion Collection Explorer
                     </a>
                   </div>
                   <nav className="flex items-center space-x-8">
@@ -60,7 +64,7 @@ export default function RootLayout({
               <div className="max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="text-center">
                   <p className="text-gray-600 dark:text-gray-400 font-light tracking-wide">
-                    Built by{' '}
+                    Built by{" "}
                     <a
                       href="https://x.com/0ceans404"
                       target="_blank"
@@ -68,8 +72,8 @@ export default function RootLayout({
                       className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-300 transition-all duration-300 font-medium tracking-tight"
                     >
                       Steph
-                    </a>{' '}
-                    | Check out the code or report bugs on{' '}
+                    </a>{" "}
+                    | Check out the code or report bugs on{" "}
                     <a
                       href="https://github.com/oceans404/nillion-storage-tools"
                       target="_blank"

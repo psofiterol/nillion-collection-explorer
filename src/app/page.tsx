@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const router = useRouter();
@@ -12,12 +12,12 @@ export default function HomePage() {
           <div className="mb-16">
             <div className="inline-block mb-8">
               <h1 className="text-6xl font-light tracking-tight text-gray-900 dark:text-gray-100 mb-6">
-                Nillion Storage Tools
+                Nillion Collection Explorer
               </h1>
               <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"></div>
             </div>
             <p className="text-2xl font-light text-gray-600 dark:text-gray-400 mb-12 leading-relaxed max-w-3xl mx-auto">
-              Builder tools for creating and managing{' '}
+              Builder tools for creating and managing{" "}
               <a
                 href="https://docs.nillion.com/build/private-storage/overview"
                 target="_blank"
@@ -25,13 +25,13 @@ export default function HomePage() {
                 className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-gray-300 transition-all duration-300 font-medium tracking-tight underline decoration-2 underline-offset-4 hover:decoration-gray-900 dark:hover:decoration-gray-100"
               >
                 Nillion Private Storage
-              </a>{' '}
+              </a>{" "}
               schemas, collections, and records.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <button
-                onClick={() => router.push('/collections')}
+                onClick={() => router.push("/collections")}
                 className="group px-10 py-4 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium text-lg tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 <span className="flex items-center">
@@ -52,7 +52,7 @@ export default function HomePage() {
                 </span>
               </button>
               <button
-                onClick={() => router.push('/create-collection')}
+                onClick={() => router.push("/create-collection")}
                 className="group px-10 py-4 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium text-lg tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 <span className="flex items-center">
@@ -110,7 +110,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <button
-                    onClick={() => router.push('/create-collection')}
+                    onClick={() => router.push("/create-collection")}
                     className="w-full py-3 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium tracking-wide transform hover:-translate-y-1 shadow-lg hover:shadow-xl"
                   >
                     Start Building →
@@ -144,7 +144,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <button
-                    onClick={() => router.push('/create-collection?tab=upload')}
+                    onClick={() => router.push("/create-collection?tab=upload")}
                     className="w-full py-3 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium tracking-wide transform hover:-translate-y-1 shadow-lg hover:shadow-xl"
                   >
                     Upload Schema →

@@ -1,4 +1,4 @@
-# Nillion Storage Tools UI
+# Nillion Collection Explorer UI
 
 A Next.js TypeScript application for creating and managing Nillion Storage schemas, collections, and records.
 
@@ -9,12 +9,12 @@ A Next.js TypeScript application for creating and managing Nillion Storage schem
 - **Data Management**: Add, view, and delete records with real-time updates
 - **Secret Sharing**: Fields marked as "secret" use Shamir's secret sharing across multiple nodes
 - **Two Collection Types**:
-  - **Standard Collections**: 
+  - **Standard Collections**:
     - Managed by builders
     - Used for application data
     - Can contain encrypted or plaintext data
     - Support indexing and queries
-  - **Owned Collections**: 
+  - **Owned Collections**:
     - Store user-owned private data
     - Each document has individual ACLs
     - Users control access permissions
