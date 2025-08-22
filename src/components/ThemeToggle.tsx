@@ -9,11 +9,27 @@ export default function ThemeToggle() {
     // Check for saved theme preference or default to system preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-      setIsDark(savedTheme === 'dark');
-      document.body.classList.toggle('dark', savedTheme === 'dark');
+      const isDarkMode = savedTheme === 'dark';
+      setIsDark(isDarkMode);
+      document.body.classList.toggle('dark', isDarkMode);
     } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      // No saved preference, use system preference
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDark(prefersDark);
+      document.body.classList.toggle('dark', prefersDark);
+      
+      // Also listen for system theme changes
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = (e: MediaQueryListEvent) => {
+        // Only update if user hasn't set a manual preference
+        if (!localStorage.getItem('theme')) {
+          setIsDark(e.matches);
+          document.body.classList.toggle('dark', e.matches);
+        }
+      };
+      
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
     }
   }, []);
 
