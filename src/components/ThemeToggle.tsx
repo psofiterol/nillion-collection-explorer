@@ -11,12 +11,16 @@ export default function ThemeToggle() {
     if (savedTheme) {
       const isDarkMode = savedTheme === 'dark';
       setIsDark(isDarkMode);
-      document.body.classList.toggle('dark', isDarkMode);
+      // Ensure proper classes are set
+      document.body.classList.remove('dark', 'light');
+      document.body.classList.add(isDarkMode ? 'dark' : 'light');
     } else {
       // No saved preference, use system preference
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDark(prefersDark);
-      document.body.classList.toggle('dark', prefersDark);
+      // Ensure proper classes are set
+      document.body.classList.remove('dark', 'light');
+      document.body.classList.add(prefersDark ? 'dark' : 'light');
       
       // Also listen for system theme changes
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -24,7 +28,8 @@ export default function ThemeToggle() {
         // Only update if user hasn't set a manual preference
         if (!localStorage.getItem('theme')) {
           setIsDark(e.matches);
-          document.body.classList.toggle('dark', e.matches);
+          document.body.classList.remove('dark', 'light');
+          document.body.classList.add(e.matches ? 'dark' : 'light');
         }
       };
       
@@ -36,7 +41,9 @@ export default function ThemeToggle() {
   const toggleTheme = () => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
-    document.body.classList.toggle('dark', newIsDark);
+    // Remove existing class and add new one to ensure proper toggle
+    document.body.classList.remove('dark', 'light');
+    document.body.classList.add(newIsDark ? 'dark' : 'light');
     localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
   };
 
