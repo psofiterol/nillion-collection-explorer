@@ -10,13 +10,13 @@ export default function NotificationBanner() {
   const getNotificationStyles = (type: NotificationType) => {
     switch (type) {
       case 'success':
-        return 'bg-gray-50 dark:bg-gray-900/20 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100';
+        return 'nillion-card border-green-500 bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-200';
       case 'error':
-        return 'bg-gray-50 dark:bg-gray-900/20 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100';
+        return 'nillion-card border-red-500 bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-200';
       case 'warning':
-        return 'bg-gray-50 dark:bg-gray-900/20 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100';
+        return 'nillion-card border-yellow-500 bg-yellow-50 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200';
       case 'info':
-        return 'bg-gray-50 dark:bg-gray-900/20 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100';
+        return 'nillion-card border-nillion-primary bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200';
     }
   };
 
@@ -87,11 +87,11 @@ export default function NotificationBanner() {
           </div>
           <button
             onClick={() => handleClose(notification.id)}
-            className="flex-shrink-0 ml-2 hover:opacity-70 transition-opacity"
+            className="flex-shrink-0 ml-2 nillion-button-ghost nillion-small"
+            style={{ padding: '0.25rem' }}
+            title="Close"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            ✕
           </button>
         </div>
       ))}

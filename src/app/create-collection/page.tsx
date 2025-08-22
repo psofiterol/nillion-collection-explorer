@@ -65,18 +65,18 @@ export default function CreateCollectionPage() {
       <div className="container mx-auto px-6 pt-4 pb-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-light tracking-tight text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-light tracking-tight text-nillion-text">
               Create New Collection
             </h1>
           </div>
           <Suspense fallback={
-            <div className="bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 p-8">
+            <div className="nillion-card shadow-xl border border-nillion-border p-8">
               <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
-                <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+                <div className="h-4 bg-nillion-surface rounded w-1/4 mb-4"></div>
+                <div className="h-10 bg-nillion-surface rounded mb-6"></div>
                 <div className="space-y-4">
-                  <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                  <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-20 bg-nillion-surface rounded"></div>
+                  <div className="h-20 bg-nillion-surface rounded"></div>
                 </div>
               </div>
             </div>

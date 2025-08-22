@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Collection, SchemaProperty } from '@/types';
-import { useNotifications } from '@/contexts/NotificationContext';
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Collection, SchemaProperty } from "@/types";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 interface CollectionFormProps {
   onSubmit: (
     collection: Omit<
       Collection,
-      '_id' | 'createdAt' | 'updatedAt' | 'description'
+      "_id" | "createdAt" | "updatedAt" | "description"
     >
   ) => Promise<void>;
   onCancel: () => void;
@@ -19,7 +19,7 @@ interface CollectionFormProps {
 interface FieldDefinition {
   id: string;
   name: string;
-  type: 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array';
+  type: "string" | "number" | "integer" | "boolean" | "object" | "array";
   required: boolean;
   isSecret: boolean;
   description: string;
@@ -46,45 +46,45 @@ export default function CollectionForm({
   const { addNotification } = useNotifications();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'build' | 'upload'>('build');
-  const [name, setName] = useState('');
-  const [type, setType] = useState<'standard' | 'owned'>('standard');
+  const [activeTab, setActiveTab] = useState<"build" | "upload">("build");
+  const [name, setName] = useState("");
+  const [type, setType] = useState<"standard" | "owned">("standard");
   const [fields, setFields] = useState<FieldDefinition[]>([
     {
-      id: 'field-0',
-      name: '_id',
-      type: 'string',
+      id: "field-0",
+      name: "_id",
+      type: "string",
       required: true,
       isSecret: false,
-      description: 'Unique identifier',
+      description: "Unique identifier",
     },
   ]);
   const [showSchemaPreview, setShowSchemaPreview] = useState(false);
-  const [jsonSchema, setJsonSchema] = useState('');
+  const [jsonSchema, setJsonSchema] = useState("");
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
 
   // Sync active tab with URL params
   useEffect(() => {
-    const tab = searchParams.get('tab');
-    if (tab === 'upload') {
-      setActiveTab('upload');
+    const tab = searchParams.get("tab");
+    if (tab === "upload") {
+      setActiveTab("upload");
     } else {
-      setActiveTab('build'); // Default to build
+      setActiveTab("build"); // Default to build
     }
   }, [searchParams]);
 
   // Update URL when tab changes
-  const handleTabChange = (tab: 'build' | 'upload') => {
+  const handleTabChange = (tab: "build" | "upload") => {
     setActiveTab(tab);
     const params = new URLSearchParams(searchParams.toString());
-    if (tab === 'upload') {
-      params.set('tab', 'upload');
+    if (tab === "upload") {
+      params.set("tab", "upload");
     } else {
-      params.delete('tab'); // Remove param for default build tab
+      params.delete("tab"); // Remove param for default build tab
     }
     const queryString = params.toString();
-    router.replace(`/create-collection${queryString ? `?${queryString}` : ''}`);
+    router.replace(`/create-collection${queryString ? `?${queryString}` : ""}`);
   };
 
   // Helper to generate unique IDs
@@ -93,7 +93,7 @@ export default function CollectionForm({
 
   // Toggle field details expansion
   const toggleFieldExpansion = (fieldId: string) => {
-    setExpandedFields(prev => {
+    setExpandedFields((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(fieldId)) {
         newSet.delete(fieldId);
@@ -107,11 +107,11 @@ export default function CollectionForm({
   const addField = (parentPath?: string) => {
     const newField: FieldDefinition = {
       id: generateFieldId(),
-      name: '',
-      type: 'string',
+      name: "",
+      type: "string",
       required: false,
       isSecret: false,
-      description: '',
+      description: "",
       parentPath,
     };
 
@@ -171,19 +171,19 @@ export default function CollectionForm({
         const updatedField = { ...field, ...updates };
 
         // If changing to object type, initialize properties
-        if (updates.type === 'object' && !updatedField.properties) {
+        if (updates.type === "object" && !updatedField.properties) {
           updatedField.properties = [];
         }
 
         // If changing to array type, initialize items
-        if (updates.type === 'array' && !updatedField.items) {
+        if (updates.type === "array" && !updatedField.items) {
           updatedField.items = {
             id: generateFieldId(),
-            name: 'item',
-            type: 'string',
+            name: "item",
+            type: "string",
             required: false,
             isSecret: false,
-            description: '',
+            description: "",
             parentPath: updatedField.id,
           };
         }
@@ -199,19 +199,19 @@ export default function CollectionForm({
         const updatedItems = { ...field.items, ...updates };
 
         // If changing array item to object type, initialize properties
-        if (updates.type === 'object' && !updatedItems.properties) {
+        if (updates.type === "object" && !updatedItems.properties) {
           updatedItems.properties = [];
         }
 
         // If changing array item to array type, initialize nested items
-        if (updates.type === 'array' && !updatedItems.items) {
+        if (updates.type === "array" && !updatedItems.items) {
           updatedItems.items = {
             id: generateFieldId(),
-            name: 'item',
-            type: 'string',
+            name: "item",
+            type: "string",
             required: false,
             isSecret: false,
-            description: '',
+            description: "",
             parentPath: updatedItems.id,
           };
         }
@@ -245,7 +245,7 @@ export default function CollectionForm({
     parentFields?: FieldDefinition[]
   ): FieldDefinition[] => {
     // Don't remove _id field
-    if (fieldId === 'field-0') return parentFields || fields;
+    if (fieldId === "field-0") return parentFields || fields;
 
     const fieldsToUpdate = parentFields || fields;
 
@@ -272,13 +272,13 @@ export default function CollectionForm({
     if (field.isSecret) {
       // Secret fields use the %share pattern
       return {
-        type: 'object',
+        type: "object",
         properties: {
-          '%share': {
-            type: 'string', // Secret fields are always strings
+          "%share": {
+            type: "string", // Secret fields are always strings
           },
         },
-        required: ['%share'],
+        required: ["%share"],
         ...(field.description && { description: field.description }),
       };
     }
@@ -289,17 +289,17 @@ export default function CollectionForm({
     };
 
     // Add constraints based on type
-    if (field.type === 'string') {
+    if (field.type === "string") {
       if (field.format) baseProperty.format = field.format;
       if (field.coerce) baseProperty.coerce = field.coerce;
     }
 
-    if (field.type === 'number' || field.type === 'integer') {
+    if (field.type === "number" || field.type === "integer") {
       if (field.minimum !== undefined) baseProperty.minimum = field.minimum;
       if (field.maximum !== undefined) baseProperty.maximum = field.maximum;
     }
 
-    if (field.type === 'array') {
+    if (field.type === "array") {
       if (field.minItems !== undefined) baseProperty.minItems = field.minItems;
       if (field.maxItems !== undefined) baseProperty.maxItems = field.maxItems;
       if (field.items) {
@@ -307,7 +307,7 @@ export default function CollectionForm({
       }
     }
 
-    if (field.type === 'object' && field.properties) {
+    if (field.type === "object" && field.properties) {
       baseProperty.properties = {};
       const objectRequired: string[] = [];
 
@@ -343,14 +343,14 @@ export default function CollectionForm({
       const parsedSchema = JSON.parse(jsonSchema);
 
       // Validate $schema field
-      if (parsedSchema.$schema !== 'http://json-schema.org/draft-07/schema#') {
+      if (parsedSchema.$schema !== "http://json-schema.org/draft-07/schema#") {
         throw new Error(
           'Schema must have "$schema": "http://json-schema.org/draft-07/schema#"'
         );
       }
 
       // Validate type is array
-      if (parsedSchema.type !== 'array') {
+      if (parsedSchema.type !== "array") {
         throw new Error('Schema "type" must be "array"');
       }
 
@@ -359,7 +359,7 @@ export default function CollectionForm({
         throw new Error('Schema must have "items" property');
       }
 
-      if (parsedSchema.items.type !== 'object') {
+      if (parsedSchema.items.type !== "object") {
         throw new Error('Schema items "type" must be "object"');
       }
 
@@ -375,7 +375,7 @@ export default function CollectionForm({
       if (
         !parsedSchema.items.required ||
         !Array.isArray(parsedSchema.items.required) ||
-        !parsedSchema.items.required.includes('_id')
+        !parsedSchema.items.required.includes("_id")
       ) {
         throw new Error('Schema items must have "_id" in required array');
       }
@@ -388,11 +388,11 @@ export default function CollectionForm({
       });
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Invalid JSON format';
+        error instanceof Error ? error.message : "Invalid JSON format";
       setJsonError(errorMessage);
       addNotification({
-        type: 'error',
-        title: 'Invalid Schema Format',
+        type: "error",
+        title: "Invalid Schema Format",
         message: `Schema format is incorrect: ${errorMessage}`,
       });
     }
@@ -402,17 +402,17 @@ export default function CollectionForm({
     e.preventDefault();
 
     if (!name.trim()) {
-      alert('Collection name is required');
+      alert("Collection name is required");
       return;
     }
 
-    if (activeTab === 'upload') {
+    if (activeTab === "upload") {
       handleJsonUpload();
       return;
     }
 
     if (!validateFieldNames(fields)) {
-      alert('All fields must have a name');
+      alert("All fields must have a name");
       return;
     }
 
@@ -428,10 +428,10 @@ export default function CollectionForm({
     });
 
     const schema = {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      type: 'array' as const,
+      $schema: "http://json-schema.org/draft-07/schema#",
+      type: "array" as const,
       items: {
-        type: 'object' as const,
+        type: "object" as const,
         properties,
         required,
       },
@@ -451,22 +451,19 @@ export default function CollectionForm({
   ): React.JSX.Element => {
     const indentClass =
       depth > 0
-        ? `ml-${Math.min(
-            depth * 4,
-            16
-          )} border-l-2 border-gray-200 dark:border-gray-600 pl-4`
-        : '';
+        ? `ml-${Math.min(depth * 4, 16)} border-l-2 border-nillion-border pl-4`
+        : "";
 
     return (
       <div
         key={field.id}
-        className={`relative p-4 border border-gray-200 dark:border-gray-600 rounded-lg ${indentClass}`}
+        className={`relative p-4 border border-nillion-border rounded-lg ${indentClass}`}
       >
-        {field.id !== 'field-0' && (
+        {field.id !== "field-0" && (
           <button
             type="button"
             onClick={() => removeField(field.id)}
-            className="absolute top-2 right-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded transition-colors duration-200"
+            className="absolute top-2 right-2 nillion-button-outline nillion-small"
           >
             Remove
           </button>
@@ -478,8 +475,8 @@ export default function CollectionForm({
               type="text"
               value={field.name}
               onChange={(e) => updateField(field.id, { name: e.target.value })}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-              disabled={field.id === 'field-0'} // _id field is readonly
+              className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
+              disabled={field.id === "field-0"} // _id field is readonly
             />
           </div>
 
@@ -487,7 +484,7 @@ export default function CollectionForm({
             <label className="block text-sm font-medium mb-1">
               Type
               {field.isSecret && (
-                <span className="text-xs text-amber-600 dark:text-amber-400 ml-2">
+                <span className="text-xs text-nillion-warning ml-2">
                   (string for secret fields)
                 </span>
               )}
@@ -497,8 +494,8 @@ export default function CollectionForm({
               onChange={(e) =>
                 updateField(field.id, { type: e.target.value as any })
               }
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-              disabled={field.id === 'field-0' || field.isSecret} // _id type is locked to string, and secret fields must be string
+              className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
+              disabled={field.id === "field-0" || field.isSecret} // _id type is locked to string, and secret fields must be string
             >
               <option value="string">String</option>
               <option value="number">Number</option>
@@ -518,7 +515,7 @@ export default function CollectionForm({
                   updateField(field.id, { required: e.target.checked })
                 }
                 className="mr-2"
-                disabled={field.id === 'field-0'} // _id is always required
+                disabled={field.id === "field-0"} // _id is always required
               />
               <span className="text-sm">Required</span>
             </label>
@@ -528,11 +525,11 @@ export default function CollectionForm({
                 type="checkbox"
                 checked={field.isSecret}
                 onChange={(e) => {
-                  if (e.target.checked && field.type !== 'string') {
+                  if (e.target.checked && field.type !== "string") {
                     // Automatically convert to string when marking as secret
-                    updateField(field.id, { 
-                      isSecret: true, 
-                      type: 'string' 
+                    updateField(field.id, {
+                      isSecret: true,
+                      type: "string",
                     });
                   } else {
                     updateField(field.id, { isSecret: e.target.checked });
@@ -540,14 +537,17 @@ export default function CollectionForm({
                 }}
                 className="mr-2"
                 disabled={
-                  field.id === 'field-0' ||
-                  field.type === 'object' ||
-                  field.type === 'array'
+                  field.id === "field-0" ||
+                  field.type === "object" ||
+                  field.type === "array"
                 } // Objects/arrays can't be directly secret
               />
               <span className="text-sm">Secret</span>
-              {field.type !== 'string' && !field.isSecret && (
-                <span className="text-xs text-gray-500 dark:text-gray-400 ml-1" title="Secret fields must be strings">
+              {field.type !== "string" && !field.isSecret && (
+                <span
+                  className="text-xs text-nillion-text-secondary ml-1"
+                  title="Secret fields must be strings"
+                >
                   (will convert to string)
                 </span>
               )}
@@ -556,10 +556,12 @@ export default function CollectionForm({
             <button
               type="button"
               onClick={() => toggleFieldExpansion(field.id)}
-              className="mt-2 text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 text-sm transition-colors duration-300 font-medium flex items-center gap-1"
+              className="mt-2 nillion-button-ghost nillion-small flex items-center w-auto"
             >
-              <span className="text-xs">{expandedFields.has(field.id) ? '▼' : '▶'}</span>
-              <span className="whitespace-nowrap">Optional: description and details</span>
+              <span className="mr-1">
+                {expandedFields.has(field.id) ? "▼" : "▶"}
+              </span>
+              <span>Description details</span>
             </button>
           </div>
         </div>
@@ -568,169 +570,174 @@ export default function CollectionForm({
         {expandedFields.has(field.id) && (
           <>
             <div className="mt-2">
-              <label className="block text-sm font-medium mb-1">Description</label>
+              <label className="block text-sm font-medium mb-1">
+                Description
+              </label>
               <input
                 type="text"
                 value={field.description}
                 onChange={(e) =>
                   updateField(field.id, { description: e.target.value })
                 }
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
+                className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
                 placeholder="Optional field description"
               />
             </div>
 
             {/* Type-specific constraints */}
             <div className="mt-3">
-          {field.type === 'string' && field.id !== 'field-0' && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-medium mb-1">Format</label>
-                <select
-                  value={field.format || ''}
-                  onChange={(e) =>
-                    updateField(field.id, {
-                      format: e.target.value || undefined,
-                    })
-                  }
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-                >
-                  <option value="">None</option>
-                  <option value="uuid">UUID</option>
-                  <option value="email">Email</option>
-                  <option value="uri">URI</option>
-                  <option value="date">Date</option>
-                  <option value="datetime">DateTime</option>
-                </select>
-              </div>
-              <div className="flex items-center">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={field.coerce || false}
-                    onChange={(e) =>
-                      updateField(field.id, {
-                        coerce: e.target.checked || undefined,
-                      })
-                    }
-                    className="mr-2"
-                  />
-                  <span className="text-xs">Coerce</span>
-                </label>
-              </div>
-            </div>
-          )}
+              {field.type === "string" && field.id !== "field-0" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium mb-1">
+                      Format
+                    </label>
+                    <select
+                      value={field.format || ""}
+                      onChange={(e) =>
+                        updateField(field.id, {
+                          format: e.target.value || undefined,
+                        })
+                      }
+                      className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
+                    >
+                      <option value="">None</option>
+                      <option value="uuid">UUID</option>
+                      <option value="email">Email</option>
+                      <option value="uri">URI</option>
+                      <option value="date">Date</option>
+                      <option value="datetime">DateTime</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={field.coerce || false}
+                        onChange={(e) =>
+                          updateField(field.id, {
+                            coerce: e.target.checked || undefined,
+                          })
+                        }
+                        className="mr-2"
+                      />
+                      <span className="text-xs">Coerce</span>
+                    </label>
+                  </div>
+                </div>
+              )}
 
-          {(field.type === 'number' || field.type === 'integer') && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-medium mb-1">
-                  Minimum
-                </label>
-                <input
-                  type="number"
-                  value={field.minimum ?? ''}
-                  onChange={(e) =>
-                    updateField(field.id, {
-                      minimum: e.target.value
-                        ? Number(e.target.value)
-                        : undefined,
-                    })
-                  }
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-                  placeholder="No limit"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium mb-1">
-                  Maximum
-                </label>
-                <input
-                  type="number"
-                  value={field.maximum ?? ''}
-                  onChange={(e) =>
-                    updateField(field.id, {
-                      maximum: e.target.value
-                        ? Number(e.target.value)
-                        : undefined,
-                    })
-                  }
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-                  placeholder="No limit"
-                />
-              </div>
-            </div>
-          )}
+              {(field.type === "number" || field.type === "integer") && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium mb-1">
+                      Minimum
+                    </label>
+                    <input
+                      type="number"
+                      value={field.minimum ?? ""}
+                      onChange={(e) =>
+                        updateField(field.id, {
+                          minimum: e.target.value
+                            ? Number(e.target.value)
+                            : undefined,
+                        })
+                      }
+                      className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
+                      placeholder="No limit"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1">
+                      Maximum
+                    </label>
+                    <input
+                      type="number"
+                      value={field.maximum ?? ""}
+                      onChange={(e) =>
+                        updateField(field.id, {
+                          maximum: e.target.value
+                            ? Number(e.target.value)
+                            : undefined,
+                        })
+                      }
+                      className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
+                      placeholder="No limit"
+                    />
+                  </div>
+                </div>
+              )}
 
-          {field.type === 'array' && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-medium mb-1">
-                  Min Items
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={field.minItems ?? ''}
-                  onChange={(e) =>
-                    updateField(field.id, {
-                      minItems: e.target.value
-                        ? Number(e.target.value)
-                        : undefined,
-                    })
-                  }
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-                  placeholder="No limit"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium mb-1">
-                  Max Items
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  value={field.maxItems ?? ''}
-                  onChange={(e) =>
-                    updateField(field.id, {
-                      maxItems: e.target.value
-                        ? Number(e.target.value)
-                        : undefined,
-                    })
-                  }
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none text-sm focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
-                  placeholder="No limit"
-                />
-              </div>
-            </div>
-          )}
+              {field.type === "array" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium mb-1">
+                      Min Items
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={field.minItems ?? ""}
+                      onChange={(e) =>
+                        updateField(field.id, {
+                          minItems: e.target.value
+                            ? Number(e.target.value)
+                            : undefined,
+                        })
+                      }
+                      className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
+                      placeholder="No limit"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1">
+                      Max Items
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={field.maxItems ?? ""}
+                      onChange={(e) =>
+                        updateField(field.id, {
+                          maxItems: e.target.value
+                            ? Number(e.target.value)
+                            : undefined,
+                        })
+                      }
+                      className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
+                      placeholder="No limit"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}
 
         {field.isSecret &&
-          field.type !== 'object' &&
-          field.type !== 'array' && (
-            <div className="mt-2 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded text-sm">
-              <p className="text-amber-800 dark:text-amber-200">
+          field.type !== "object" &&
+          field.type !== "array" && (
+            <div className="mt-2 p-2 nillion-warning-box border border-nillion-warning rounded text-sm">
+              <p className="text-nillion-warning">
                 🔒 This field will be encrypted using secret sharing across
                 multiple nodes.
               </p>
-              {field.type !== 'string' && (
-                <p className="text-amber-600 dark:text-amber-300 mt-1 font-medium">
-                  ⚠️ Note: Secret fields must be strings. This field's type has been automatically converted to string.
+              {field.type !== "string" && (
+                <p className="text-nillion-warning mt-1 font-medium">
+                  ⚠️ Note: Secret fields must be strings. This field's type has
+                  been automatically converted to string.
                 </p>
               )}
             </div>
           )}
 
         {/* Array items configuration */}
-        {field.type === 'array' && field.items && (
+        {field.type === "array" && field.items && (
           <div className="mt-4">
             <h4 className="text-sm font-medium mb-2">
               Array Item Configuration:
             </h4>
-            <div className="pl-4 border-l-2 border-gray-300 dark:border-gray-600">
+            <div className="pl-4 border-l-2 border-nillion-border">
               {/* Render the array items as a nested field */}
               {renderField(field.items, depth + 1)}
             </div>
@@ -738,14 +745,14 @@ export default function CollectionForm({
         )}
 
         {/* Object properties */}
-        {field.type === 'object' && (
+        {field.type === "object" && (
           <div className="mt-4">
             <div className="flex justify-between items-center mb-2">
               <h4 className="text-sm font-medium">Object Properties:</h4>
               <button
                 type="button"
                 onClick={() => addField(field.id)}
-                className="text-sm px-3 py-1 border-2 border-gray-300 dark:border-gray-600 rounded-none text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-900 dark:hover:border-gray-100 transition-all duration-300 font-medium tracking-wide"
+                className="nillion-button-outline nillion-small"
               >
                 + Add Property
               </button>
@@ -753,7 +760,7 @@ export default function CollectionForm({
             <div className="space-y-3">
               {field.properties?.map((prop) => renderField(prop, depth + 1))}
               {(!field.properties || field.properties.length === 0) && (
-                <div className="text-sm text-gray-500 dark:text-gray-400 italic p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-none font-light">
+                <div className="text-sm text-nillion-text-secondary italic p-4 border-2 border-dashed border-nillion-border rounded-none font-light">
                   No properties defined. Click "Add Property" to add object
                   properties.
                 </div>
@@ -766,7 +773,7 @@ export default function CollectionForm({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 p-8">
+    <div className="nillion-card shadow-xl border border-nillion-border p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Collection Info */}
         <div className="space-y-4">
@@ -778,7 +785,7 @@ export default function CollectionForm({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-none focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-800 dark:text-white font-light tracking-wide transition-all duration-300"
+              className="w-full px-4 py-3 border-2 border-nillion-border rounded-none focus:outline-none focus:border-nillion-primary  font-light tracking-wide transition-all duration-300"
               placeholder="My New Collection"
               required
             />
@@ -790,76 +797,78 @@ export default function CollectionForm({
             </label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as 'standard' | 'owned')}
-              className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-none focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-800 dark:text-white font-light tracking-wide transition-all duration-300"
+              onChange={(e) => setType(e.target.value as "standard" | "owned")}
+              className="w-full px-4 py-3 border-2 border-nillion-border rounded-none focus:outline-none focus:border-nillion-primary  font-light tracking-wide transition-all duration-300"
             >
               <option value="standard">Standard</option>
               <option value="owned" disabled>
                 Owned (Individual ownership with ACL)
               </option>
             </select>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {type === 'standard'
-                ? 'Builder managed collections for application data'
-                : 'Users own individual documents with granular permissions'}
+            <p className="text-sm text-nillion-text-secondary mt-1">
+              {type === "standard"
+                ? "Builder managed collections for application data"
+                : "Users own individual documents with granular permissions"}
             </p>
           </div>
         </div>
 
         {/* Schema Tabs */}
         <div>
-          <div className="flex border-b border-gray-200 dark:border-gray-600 mb-6">
-            <button
-              type="button"
-              onClick={() => handleTabChange('build')}
-              className={`px-6 py-3 border-b-2 font-light text-base tracking-wide transition-all duration-300 ${
-                activeTab === 'build'
-                  ? 'border-gray-900 dark:border-gray-100 text-gray-900 dark:text-white'
-                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              Build Custom Schema
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTabChange('upload')}
-              className={`px-6 py-3 border-b-2 font-light text-base tracking-wide transition-all duration-300 ${
-                activeTab === 'upload'
-                  ? 'border-gray-900 dark:border-gray-100 text-gray-900 dark:text-white'
-                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              Upload JSON Schema
-            </button>
+          <div className="mb-6">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => handleTabChange("build")}
+                className={`font-heading text-base tracking-wide transition-all duration-300 ${
+                  activeTab === "build"
+                    ? "nillion-button-primary"
+                    : "nillion-button-ghost"
+                }`}
+              >
+                Build Custom Schema in UI
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTabChange("upload")}
+                className={`font-heading text-base tracking-wide transition-all duration-300 ${
+                  activeTab === "upload"
+                    ? "nillion-button-primary"
+                    : "nillion-button-ghost"
+                }`}
+              >
+                Upload JSON Schema
+              </button>
+            </div>
           </div>
 
-          {activeTab === 'build' ? (
+          {activeTab === "build" ? (
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-light tracking-wide text-gray-900 dark:text-gray-100">
+                <h3 className="text-xl font-light tracking-wide text-nillion-text">
                   Schema Definition
                 </h3>
                 <button
                   type="button"
                   onClick={() => setShowSchemaPreview(!showSchemaPreview)}
-                  className="px-4 py-2 text-sm border-2 border-gray-300 dark:border-gray-600 rounded-none text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-900 dark:hover:border-gray-100 transition-all duration-300 font-medium tracking-wide"
+                  className="nillion-button-outline nillion-small"
                 >
-                  {showSchemaPreview ? 'Hide Preview' : 'Show Preview'}
+                  {showSchemaPreview ? "Hide Preview" : "Show Preview"}
                 </button>
               </div>
 
               {showSchemaPreview && (
-                <div className="mb-6 p-6 bg-gray-50 dark:bg-gray-900 rounded-none border border-gray-200 dark:border-gray-600">
-                  <h4 className="text-base font-light tracking-wide mb-4 text-gray-900 dark:text-gray-100">
+                <div className="mb-6 p-6 nillion-surface rounded-none border border-nillion-border">
+                  <h4 className="text-base font-light tracking-wide mb-4 text-nillion-text">
                     Schema Preview:
                   </h4>
-                  <pre className="text-xs font-mono text-gray-700 dark:text-gray-300 overflow-x-auto">
+                  <pre className="text-xs font-mono overflow-x-auto p-3 rounded">
                     {JSON.stringify(
                       {
-                        $schema: 'http://json-schema.org/draft-07/schema#',
-                        type: 'array',
+                        $schema: "http://json-schema.org/draft-07/schema#",
+                        type: "array",
                         items: {
-                          type: 'object',
+                          type: "object",
                           properties: Object.fromEntries(
                             fields.map((field) => [
                               field.name,
@@ -884,7 +893,7 @@ export default function CollectionForm({
                 <button
                   type="button"
                   onClick={() => addField()}
-                  className="w-full px-6 py-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-none text-gray-600 dark:text-gray-400 hover:border-gray-900 dark:hover:border-gray-100 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-300 font-medium tracking-wide"
+                  className="w-full nillion-button-outline border-dashed hover:border-solid"
                 >
                   + Add Field
                 </button>
@@ -893,13 +902,13 @@ export default function CollectionForm({
           ) : (
             <div className="space-y-4">
               <div>
-                <label className="block text-base font-light tracking-wide mb-3 text-gray-900 dark:text-gray-100">
+                <label className="block text-base font-light tracking-wide mb-3 text-nillion-text">
                   JSON Schema *
                 </label>
                 <textarea
                   value={jsonSchema}
                   onChange={(e) => setJsonSchema(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-none focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white font-mono text-sm transition-all duration-300"
+                  className="w-full px-4 py-3 border-2 border-nillion-border rounded-none focus:outline-none focus:border-nillion-primary  font-mono text-sm transition-all duration-300"
                   placeholder={`{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "array",
@@ -913,15 +922,15 @@ export default function CollectionForm({
   }
 }`}
                   rows={15}
-                  required={activeTab === 'upload'}
+                  required={activeTab === "upload"}
                 />
                 {jsonError && (
-                  <p className="mt-2 text-sm text-gray-900 dark:text-gray-100 font-light">
+                  <p className="mt-2 text-sm text-nillion-text font-light">
                     {jsonError}
                   </p>
                 )}
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 font-light leading-relaxed">
+              <p className="text-sm text-nillion-text-secondary font-light leading-relaxed">
                 Paste your JSON schema above. The schema must be an array type
                 with object items containing properties.
               </p>
@@ -934,13 +943,17 @@ export default function CollectionForm({
           <button
             type="submit"
             disabled={isLoading}
-            data-umami-event={activeTab === 'build' ? 'create-collection-custom' : 'create-collection-from-json'}
-            className="flex-1 px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-none hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300 font-medium tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg disabled:hover:bg-gray-900 dark:disabled:hover:bg-gray-100 min-h-[48px] flex items-center justify-center"
+            data-umami-event={
+              activeTab === "build"
+                ? "create-collection-custom"
+                : "create-collection-from-json"
+            }
+            className="flex-1 nillion-button min-h-[48px] flex items-center justify-center"
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
                 <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white dark:text-gray-900"
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -962,14 +975,14 @@ export default function CollectionForm({
                 Creating Collection...
               </span>
             ) : (
-              'Create Collection'
+              "Create Collection"
             )}
           </button>
           <button
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="px-8 py-3 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
+            className="nillion-button-outline"
           >
             Cancel
           </button>

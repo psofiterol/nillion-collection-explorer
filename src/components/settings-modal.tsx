@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 import {
   useNetworkConfig,
   NetworkConfigType,
   PresetType,
   PRESET_CONFIGS,
-} from '@/providers/network-config-provider';
-import { useState, useEffect } from 'react';
+} from "@/providers/network-config-provider";
+import { useState, useEffect } from "react";
 
 interface SettingsModalProps {
   open: boolean;
@@ -23,10 +23,10 @@ export function SettingsModal({
   const [selectedPreset, setSelectedPreset] =
     useState<PresetType>(currentPreset);
   const [formValues, setFormValues] = useState({
-    NILCHAIN_URL: '',
-    NILAUTH_URL: '',
-    NILDB_NODES: ['', '', ''],
-    NILLION_API_KEY: '',
+    NILCHAIN_URL: "",
+    NILAUTH_URL: "",
+    NILDB_NODES: ["", "", ""],
+    NILLION_API_KEY: "",
   });
 
   useEffect(() => {
@@ -36,20 +36,23 @@ export function SettingsModal({
         NILCHAIN_URL: currentConfig.NILCHAIN_URL,
         NILAUTH_URL: currentConfig.NILAUTH_URL,
         NILDB_NODES: [...currentConfig.NILDB_NODES],
-        NILLION_API_KEY: currentConfig.NILLION_API_KEY || '',
+        NILLION_API_KEY: currentConfig.NILLION_API_KEY || "",
       });
     }
   }, [open, currentConfig, currentPreset]);
 
   const handleSave = () => {
-    setNetworkConfig(formValues as unknown as NetworkConfigType, selectedPreset);
+    setNetworkConfig(
+      formValues as unknown as NetworkConfigType,
+      selectedPreset
+    );
     onOpenChange(false);
   };
 
   const handlePresetChange = (preset: PresetType) => {
     setSelectedPreset(preset);
 
-    if (preset !== 'custom') {
+    if (preset !== "custom") {
       // Load preset values but keep the current API key
       const presetConfig = PRESET_CONFIGS[preset];
       setFormValues({
@@ -68,8 +71,8 @@ export function SettingsModal({
     }));
 
     // Switch to custom when user edits network values (but not API key)
-    if (selectedPreset !== 'custom' && field !== 'NILLION_API_KEY') {
-      setSelectedPreset('custom');
+    if (selectedPreset !== "custom" && field !== "NILLION_API_KEY") {
+      setSelectedPreset("custom");
     }
   };
 
@@ -82,8 +85,8 @@ export function SettingsModal({
     }));
 
     // Switch to custom when user edits values
-    if (selectedPreset !== 'custom') {
-      setSelectedPreset('custom');
+    if (selectedPreset !== "custom") {
+      setSelectedPreset("custom");
     }
   };
 
@@ -93,25 +96,44 @@ export function SettingsModal({
 
   if (!open) return null;
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onOpenChange(false);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-xl max-h-[85vh] overflow-y-auto">
-        <div className="p-6">
-          <h2 className="text-2xl font-light tracking-wide text-gray-900 dark:text-gray-100 mb-5">
-            Network Configuration
-          </h2>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      onClick={handleBackdropClick}
+    >
+      <div className="nillion-card w-full max-w-xl max-h-[85vh] overflow-y-auto">
+        <div className="p-4">
+          <div className="flex justify-between items-start mb-3">
+            <h2 className="text-2xl font-heading">
+              nilDB Network Configuration
+            </h2>
+            <button
+              onClick={() => onOpenChange(false)}
+              className="nillion-button-ghost nillion-small"
+              style={{ padding: "0.25rem" }}
+              title="Close"
+            >
+              ✕
+            </button>
+          </div>
 
           {/* Preset Selection */}
-          <div className="mb-5">
-            <div className="flex items-center gap-2 mb-2">
-              <label className="text-xs font-medium tracking-wide text-gray-700 dark:text-gray-300 uppercase">
+          <div className="mb-3">
+            <div className="flex items-center gap-2 mb-1">
+              <label className="text-xs font-medium tracking-wide uppercase">
                 Network Preset
               </label>
               <a
                 href="https://docs.nillion.com/build/network-config#nildb-nodes"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors inline-flex items-center gap-1"
+                className="text-xs text-nillion-text-secondary hover:text-nillion-primary transition-colors inline-flex items-center gap-1"
               >
                 [see Nillion docs
                 <svg
@@ -133,22 +155,22 @@ export function SettingsModal({
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => handlePresetChange('testnet')}
-                className={`px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 ${
-                  selectedPreset === 'testnet'
-                    ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
-                    : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-gray-100'
+                onClick={() => handlePresetChange("testnet")}
+                className={`font-heading text-base tracking-wide transition-all duration-300 ${
+                  selectedPreset === "testnet"
+                    ? "nillion-button-primary"
+                    : "nillion-button-ghost"
                 }`}
               >
                 Testnet
               </button>
               <button
                 type="button"
-                onClick={() => handlePresetChange('custom')}
-                className={`px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 ${
-                  selectedPreset === 'custom'
-                    ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
-                    : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-900 dark:hover:border-gray-100'
+                onClick={() => handlePresetChange("custom")}
+                className={`font-heading text-base tracking-wide transition-all duration-300 ${
+                  selectedPreset === "custom"
+                    ? "nillion-button-primary"
+                    : "nillion-button-ghost"
                 }`}
               >
                 Custom
@@ -156,49 +178,50 @@ export function SettingsModal({
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div>
-              <label className="block text-xs font-medium tracking-wide text-gray-700 dark:text-gray-300 mb-1 uppercase">
+              <label className="block text-xs font-medium tracking-wide uppercase mb-1">
                 Nilchain URL
               </label>
               <input
                 type="text"
                 value={formValues.NILCHAIN_URL}
                 onChange={(e) =>
-                  handleInputChange('NILCHAIN_URL', e.target.value)
+                  handleInputChange("NILCHAIN_URL", e.target.value)
                 }
-                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-colors font-mono"
+                className="w-full font-mono text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium tracking-wide text-gray-700 dark:text-gray-300 mb-1 uppercase">
+              <label className="block text-xs font-medium tracking-wide uppercase mb-1">
                 Nilauth URL
               </label>
               <input
                 type="text"
                 value={formValues.NILAUTH_URL}
                 onChange={(e) =>
-                  handleInputChange('NILAUTH_URL', e.target.value)
+                  handleInputChange("NILAUTH_URL", e.target.value)
                 }
-                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-colors font-mono"
+                className="w-full font-mono text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium tracking-wide text-gray-700 dark:text-gray-300 mb-1 uppercase">
+              <label className="block text-xs font-medium tracking-wide uppercase mb-1">
                 NilDB Nodes
               </label>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {formValues.NILDB_NODES.map((node, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    value={node}
-                    onChange={(e) => handleNodeChange(index, e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-colors font-mono"
-                    placeholder={`Node ${index + 1}`}
-                  />
+                  <div key={index}>
+                    <input
+                      type="text"
+                      value={node}
+                      onChange={(e) => handleNodeChange(index, e.target.value)}
+                      className="w-full font-mono text-sm"
+                      placeholder={`Node ${index + 1}`}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
@@ -207,23 +230,19 @@ export function SettingsModal({
               <div className="flex items-center gap-2 mb-1">
                 <label
                   className={`text-xs font-medium tracking-wide uppercase ${
-                    highlightApiKey
-                      ? 'text-red-600 dark:text-red-400'
-                      : 'text-gray-700 dark:text-gray-300'
+                    highlightApiKey ? "text-red-600" : ""
                   }`}
                 >
                   API Key
                   {highlightApiKey && (
-                    <span className="text-red-600 dark:text-red-400 ml-1">
-                      *
-                    </span>
+                    <span className="text-red-600 ml-1">*</span>
                   )}
                 </label>
                 <a
                   href="https://docs.nillion.com/build/network-api-access"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors inline-flex items-center gap-1"
+                  className="text-xs text-nillion-text-secondary hover:text-nillion-primary transition-colors inline-flex items-center gap-1"
                 >
                   [see Nillion docs
                   <svg
@@ -244,56 +263,52 @@ export function SettingsModal({
               </div>
               <input
                 type="password"
-                value={formValues.NILLION_API_KEY || ''}
+                value={formValues.NILLION_API_KEY || ""}
                 onChange={(e) =>
-                  handleInputChange('NILLION_API_KEY', e.target.value)
+                  handleInputChange("NILLION_API_KEY", e.target.value)
                 }
-                className={`w-full px-3 py-2 text-sm border focus:outline-none dark:bg-gray-700 dark:text-white transition-colors font-mono ${
-                  highlightApiKey
-                    ? 'border-red-500 dark:border-red-500 focus:border-red-600 dark:focus:border-red-400'
-                    : 'border-gray-300 dark:border-gray-600 focus:border-gray-900 dark:focus:border-gray-100'
+                className={`w-full font-mono text-sm ${
+                  highlightApiKey ? "border-red-500 focus:border-red-600" : ""
                 }`}
                 placeholder="Your API key"
                 autoFocus={highlightApiKey}
               />
               {highlightApiKey && (
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                <p className="text-xs text-red-600 mt-1">
                   A valid Nillion API key is required
                 </p>
               )}
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-nillion-text-secondary mt-1">
                 Stored in localStorage for development only
               </p>
-              <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded text-xs">
-                <p className="text-yellow-800 dark:text-yellow-200 font-medium">
-                  ⚠️ Warning: This tool is for testing purposes only. Only use Testnet API keys.
+              <div className="mt-1 p-2 nillion-card border-2 border-nillion-primary text-sm">
+                <p className="text-nillion-primary font-medium">
+                  ⚠️ Warning: This tool is for testing purposes only. Only use
+                  Testnet API keys.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
-            <span className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          <div className="flex justify-between items-center mt-3 pt-3 border-t border-nillion-border">
+            <span className="text-xs text-nillion-text-secondary uppercase tracking-wide">
               {selectedPreset}
             </span>
-            <div className="flex space-x-3">
+            <div className="flex gap-3">
               <button
                 onClick={() => onOpenChange(false)}
-                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                className="nillion-button-outline"
               >
                 Cancel
               </button>
-              <button
-                onClick={handleSave}
-                className="px-6 py-2 text-sm bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 font-medium transition-colors"
-              >
+              <button onClick={handleSave} className="nillion-button">
                 Save
               </button>
             </div>
           </div>
 
           {hasChanges && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
+            <p className="text-xs text-nillion-text-secondary text-center mt-3">
               Page will reload to apply changes
             </p>
           )}

@@ -276,31 +276,31 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
       const arrayItems = Array.isArray(value) ? value : [];
       
       return (
-        <div key={fieldKey} className="space-y-3 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+        <div key={fieldKey} className="space-y-3 border border-nillion-border rounded-lg p-4">
           <div className="flex justify-between items-center">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label>
               {fieldName} {isRequired && <span className="text-red-500">*</span>}
-              <span className="text-xs text-gray-500 ml-2">(Array)</span>
+              <span className="text-xs text-nillion-text-secondary ml-2">(Array)</span>
             </label>
             <button
               type="button"
               onClick={() => addArrayItem(path, property)}
-              className="px-3 py-1 text-sm border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium tracking-wide"
+              className="nillion-button-outline nillion-small"
             >
               + Add Item
             </button>
           </div>
           
           {property.description && (
-            <p className="text-xs text-gray-600 dark:text-gray-400">{property.description}</p>
+            <p className="text-xs text-nillion-text-secondary">{property.description}</p>
           )}
           
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {arrayItems.length === 0 ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400 italic">No items added yet</p>
+              <p className="text-sm text-nillion-text-secondary italic">No items added yet</p>
             ) : (
               arrayItems.map((item: any, index: number) => (
-                <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded">
+                <div key={index} className="flex items-start gap-3 p-3 bg-nillion-bg-secondary rounded">
                   <div className="flex-1">
                     {property.items && renderFormField(
                       `Item ${index + 1}`,
@@ -312,7 +312,8 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
                   <button
                     type="button"
                     onClick={() => removeArrayItem(path, index)}
-                    className="px-2 py-1 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-300"
+                    className="nillion-button-ghost nillion-small"
+                    style={{ padding: '0.25rem' }}
                     title="Remove item"
                   >
                     ✕
@@ -327,17 +328,17 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
 
     if (property.type === 'object' && !isShareField) {
       return (
-        <div key={fieldKey} className="space-y-3 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <div key={fieldKey} className="space-y-3 border border-nillion-border rounded-lg p-4">
+          <label>
             {fieldName} {isRequired && <span className="text-red-500">*</span>}
-            <span className="text-xs text-gray-500 ml-2">(Object)</span>
+            <span className="text-xs text-nillion-text-secondary ml-2">(Object)</span>
           </label>
           
           {property.description && (
-            <p className="text-xs text-gray-600 dark:text-gray-400">{property.description}</p>
+            <p className="text-xs text-nillion-text-secondary">{property.description}</p>
           )}
           
-          <div className="space-y-3 pl-4 border-l-2 border-gray-200 dark:border-gray-600">
+          <div className="space-y-3 pl-4 border-l-2 border-nillion-border">
             {property.properties && Object.entries(property.properties).map(([propName, propSchema]) =>
               renderFormField(
                 propName,
@@ -354,20 +355,19 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
     // Simple field types (string, number, boolean, or %share object)
     return (
       <div key={fieldKey} className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label>
           {fieldName} {isRequired && <span className="text-red-500">*</span>}
           {isShareField && <span className="text-yellow-600 ml-1">🔒</span>}
         </label>
         
         {property.description && (
-          <p className="text-xs text-gray-600 dark:text-gray-400">{property.description}</p>
+          <p className="text-xs text-nillion-text-secondary">{property.description}</p>
         )}
         
         {property.type === 'boolean' ? (
           <select
             value={String(value)}
             onChange={(e) => updateNestedValue(path, e.target.value === 'true')}
-            className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-none focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
             required={isRequired}
           >
             <option value="false">False</option>
@@ -385,7 +385,7 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
                 }
                 updateNestedValue(path, processedValue);
               }}
-              className="w-full px-3 py-2 pr-10 border-2 border-gray-300 dark:border-gray-600 rounded-none focus:outline-none focus:border-gray-900 dark:focus:border-gray-100 dark:bg-gray-700 dark:text-white transition-all duration-300"
+              className="pr-10"
               placeholder={isShareField ? 'Enter secret value...' : `Enter ${fieldName}...`}
               required={isRequired && fieldName !== '_id'}
             />
@@ -393,25 +393,17 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
               <button
                 type="button"
                 onClick={() => setShowSecrets(prev => ({ ...prev, [fieldKey]: !prev[fieldKey] }))}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 nillion-button-ghost nillion-small"
+                style={{ padding: '0.25rem' }}
               >
-                {isSecretVisible ? (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                  </svg>
-                )}
+                {isSecretVisible ? '👁️' : '👁️‍🗨️'}
               </button>
             )}
           </div>
         )}
         
         {isShareField && (
-          <p className="text-xs text-yellow-600 dark:text-yellow-400">
+          <p className="text-xs text-yellow-600">
             This field will be encrypted and secret-shared across nodes
           </p>
         )}
@@ -423,36 +415,34 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="nillion-card max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div className="border-b border-nillion-border pb-4 mb-4">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <h2 className="text-2xl font-light tracking-tight text-gray-900 dark:text-white mb-2">
+              <h2 className="text-2xl mb-2">
                 Edit Record
               </h2>
-              <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent mb-4"></div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 font-light">
+              <p className="text-sm text-nillion-text-secondary">
                 Record ID: {record._id}
               </p>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1"
+              className="nillion-button-ghost nillion-small"
+              style={{ padding: '0.25rem' }}
               title="Close"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              ✕
             </button>
           </div>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+        <div className="overflow-y-auto max-h-[calc(90vh-250px)]">
           {error && (
-            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-md">
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
               {error}
             </div>
           )}
@@ -471,12 +461,12 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
           </form>
         </div>
 
-        <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
+        <div className="pt-4 border-t border-nillion-border flex justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="px-6 py-3 border-2 border-gray-900 dark:border-gray-100 text-gray-900 dark:text-gray-100 rounded-none hover:bg-gray-900 dark:hover:bg-gray-100 hover:text-white dark:hover:text-gray-900 transition-all duration-300 font-medium tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
+            className="nillion-button-outline"
           >
             Cancel
           </button>
@@ -484,7 +474,6 @@ export default function EditDataModal({ collection, record, isOpen, onClose, onS
             onClick={handleSubmit}
             disabled={submitting}
             data-umami-event="update-record"
-            className="px-6 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-none hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300 font-medium tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
           >
             {submitting ? 'Updating...' : 'Update Record'}
           </button>

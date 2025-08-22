@@ -2,26 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* Nillion.css handles body styling and CSS variables */
+/* Only keep Tailwind utilities that don't conflict */
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Custom dark mode overrides for secondary buttons */
+.dark .nillion-button-secondary,
+[data-theme="dark"] .nillion-button-secondary {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark .nillion-button-secondary:hover,
+[data-theme="dark"] .nillion-button-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Compact emoji buttons in navbar */
+nav .nillion-button-secondary.nillion-small {
+  padding: 0.25rem 0.375rem !important;
+  min-width: auto !important;
+}
+
+/* Pre/code block styling with proper contrast */
+pre {
+  background-color: var(--nillion-grey-light) !important;
+  border: 1px solid var(--nillion-border) !important;
+  color: var(--nillion-text) !important;
+}
+
+.dark pre,
+[data-theme="dark"] pre {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--nillion-text) !important;
 }
