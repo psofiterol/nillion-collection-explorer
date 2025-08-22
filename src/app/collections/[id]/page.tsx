@@ -624,7 +624,7 @@ export default function CollectionDetailPage() {
                           })}
                         {/* Sticky Actions cell */}
                         <td className="sticky right-0 z-10 bg-nillion-bg px-4 py-3 text-center border-l border-nillion-border">
-                          <div className="flex justify-center gap-1">
+                          <div className="flex justify-center gap-2">
                             <button
                               onClick={() => setViewingRecord(record)}
                               className="nillion-button-secondary nillion-small"
