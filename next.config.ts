@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["@nillion/secretvaults", "@nillion/nuc", "@nillion/blindfold"],
+  serverExternalPackages: ["@nillion/secretvaults", "@nillion/nuc"],
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,

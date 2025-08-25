@@ -9,7 +9,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@nillion/blindfold": "0.1.0",
     "@nillion/nuc": "0.1.0",
     "@nillion/secretvaults": "0.1.4",
     "next": "15.1.6",

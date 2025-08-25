@@ -102,7 +102,6 @@ The demo uses:
 - **Tailwind CSS** for styling
 - **@nillion/secretvaults** for backend nilDB operations
 - **@nillion/nuc** for authentication
-- **@nillion/blindfold** for encryption/secret sharing
 
 ### API Routes
 
