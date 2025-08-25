@@ -5,9 +5,32 @@ import { NavbarClient } from "./navbar-client";
 import NavLinks from "@/components/NavLinks";
 
 export const metadata: Metadata = {
-  title: "Nillion Collection Explorer",
+  title: "Collection Explorer",
   description:
-    "Demo UI for creating and managing Nillion secretvaults collections",
+    "Use the Collection Explorer to create and manage Nillion Private Storage schemas, collections, and records",
+  openGraph: {
+    title: "Collection Explorer",
+    description:
+      "Use the Collection Explorer to create and manage Nillion Private Storage schemas, collections, and records",
+    url: "https://collection-explorer.nillion.com/",
+    images: [
+      {
+        url: "https://collection-explorer.nillion.com/collection-explorer-card.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Collection Explorer",
+    description:
+      "Use the Collection Explorer to create and manage Nillion Private Storage schemas, collections, and records",
+    images: [
+      "https://collection-explorer.nillion.com/collection-explorer-card.png",
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -33,7 +56,9 @@ export default function RootLayout({
                 <div className="flex justify-between items-center h-16">
                   <div className="flex items-center">
                     <a href="/" className="hover:opacity-80 transition-opacity">
-                      <h1 className="text-2xl mb-0 font-heading">Nillion Collection Explorer</h1>
+                      <h1 className="text-2xl mb-0 font-heading">
+                        Nillion Collection Explorer
+                      </h1>
                     </a>
                   </div>
                   <nav className="flex items-center gap-4">
