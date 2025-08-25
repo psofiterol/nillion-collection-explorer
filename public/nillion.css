@@ -477,7 +477,7 @@ input[type="range"] {
 .nillion-card {
   background-color: var(--nillion-bg-secondary);
   border-radius: 0.5rem;
-  padding: 1.5rem;
+  padding: 1rem;
   box-shadow: var(--nillion-shadow);
   border: 1px solid var(--nillion-border);
 }

@@ -180,7 +180,7 @@ export default function CollectionList({
                 onClick={() => router.push(`/collections/${collection._id}`)}
               >
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="truncate flex-1 mr-2 text-xl">
+                  <h3 className="truncate flex-1 mr-2 text-lg">
                     {collection.name}
                   </h3>
                   <div className="flex items-center gap-2">
@@ -240,46 +240,43 @@ export default function CollectionList({
   };
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Collections header */}
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h3>
-            {searchFilter ? (
-              <span>
-                Collections ({filteredCollections.length} of{" "}
-                {collections.length})
-              </span>
-            ) : (
-              <span>Your Collections ({collections.length})</span>
-            )}
-          </h3>
-          <button onClick={() => router.push("/create-collection")}>
-            Create New Collection
-          </button>
-        </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h3>
+          {searchFilter ? (
+            <span>
+              Collections ({filteredCollections.length} of {collections.length})
+            </span>
+          ) : (
+            <span>Your Collections ({collections.length})</span>
+          )}
+        </h3>
+        <button onClick={() => router.push("/create-collection")}>
+          Create New Collection
+        </button>
+      </div>
 
-        {/* Search bar */}
-        <div className="max-w-md">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchFilter}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder="Search by collection name or ID..."
-              className="pr-10"
-            />
-            {searchFilter && (
-              <button
-                onClick={() => handleSearchChange("")}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 nillion-button-ghost nillion-small"
-                style={{ padding: "0.25rem" }}
-                title="Clear search"
-              >
-                ✕
-              </button>
-            )}
-          </div>
+      {/* Search bar */}
+      <div className="max-w-md">
+        <div className="relative">
+          <input
+            type="text"
+            value={searchFilter}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            placeholder="Search by collection name or ID..."
+            className="pr-10"
+          />
+          {searchFilter && (
+            <button
+              onClick={() => handleSearchChange("")}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 nillion-button-ghost nillion-small"
+              style={{ padding: "0.25rem" }}
+              title="Clear search"
+            >
+              ✕
+            </button>
+          )}
         </div>
       </div>
 
