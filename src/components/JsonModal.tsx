@@ -9,9 +9,13 @@ interface JsonModalProps {
   data: any;
   isOpen: boolean;
   onClose: () => void;
+  link?: {
+    text: string;
+    href: string;
+  };
 }
 
-export default function JsonModal({ title, subtitle, data, isOpen, onClose }: JsonModalProps) {
+export default function JsonModal({ title, subtitle, data, isOpen, onClose, link }: JsonModalProps) {
   const { addNotification } = useNotifications();
   const [copied, setCopied] = useState(false);
 
@@ -62,6 +66,18 @@ export default function JsonModal({ title, subtitle, data, isOpen, onClose }: Js
               {subtitle && (
                 <p className="text-sm text-nillion-text-secondary">
                   {subtitle}
+                </p>
+              )}
+              {link && (
+                <p className="text-sm mt-1">
+                  <a 
+                    href={link.href} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-nillion-primary hover:text-nillion-primary-dark underline"
+                  >
+                    {link.text}
+                  </a>
                 </p>
               )}
             </div>

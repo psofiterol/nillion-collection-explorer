@@ -1,15 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Collection, SchemaProperty } from "@/types";
-import AddDataModal from "@/components/AddDataModal";
-import ViewRecordModal from "@/components/ViewRecordModal";
-import EditDataModal from "@/components/EditDataModal";
-import JsonModal from "@/components/JsonModal";
-import { useNotifications } from "@/contexts/NotificationContext";
-import { apiFetch } from "@/lib/api-client";
-import "./records-table.css";
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { Collection, SchemaProperty } from '@/types';
+import AddDataModal from '@/components/AddDataModal';
+import ViewRecordModal from '@/components/ViewRecordModal';
+import EditDataModal from '@/components/EditDataModal';
+import JsonModal from '@/components/JsonModal';
+import { useNotifications } from '@/contexts/NotificationContext';
+import { apiFetch } from '@/lib/api-client';
+import { generateExampleRecord } from '@/lib/schema-utils';
+import './records-table.css';
 
 interface CollectionMetadata {
   count: number;
@@ -37,6 +38,7 @@ export default function CollectionDetailPage() {
   const [editingRecord, setEditingRecord] = useState<any>(null);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [showEncryptedData, setShowEncryptedData] = useState(false);
+  const [showExampleModal, setShowExampleModal] = useState(false);
 
   useEffect(() => {
     if (!collectionId) return;
@@ -58,7 +60,7 @@ export default function CollectionDetailPage() {
 
         const metadataData = await metadataResponse.json();
         if (!metadataData.success) {
-          throw new Error(metadataData.error || "Failed to fetch collection");
+          throw new Error(metadataData.error || 'Failed to fetch collection');
         }
 
         // Create collection object with available data from API
@@ -72,7 +74,7 @@ export default function CollectionDetailPage() {
           description: `Created: ${
             metadataData.metadata.first_write
               ? new Date(metadataData.metadata.first_write).toLocaleDateString()
-              : "Unknown"
+              : 'Unknown'
           }`,
           createdAt:
             metadataData.metadata.first_write || new Date().toISOString(),
@@ -97,7 +99,7 @@ export default function CollectionDetailPage() {
           const data = await response.json();
 
           if (!data.success) {
-            throw new Error(data.error || "Failed to fetch records");
+            throw new Error(data.error || 'Failed to fetch records');
           }
 
           setRecords(data.data || []);
@@ -106,13 +108,13 @@ export default function CollectionDetailPage() {
           setRecordsError(
             recordsErr instanceof Error
               ? recordsErr.message
-              : "Failed to load records"
+              : 'Failed to load records'
           );
         }
       } catch (err) {
         // Failed to load collection data
         setError(
-          err instanceof Error ? err.message : "Failed to load collection"
+          err instanceof Error ? err.message : 'Failed to load collection'
         );
       } finally {
         setLoading(false);
@@ -159,12 +161,12 @@ export default function CollectionDetailPage() {
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || "Failed to fetch records");
+        throw new Error(data.error || 'Failed to fetch records');
       }
 
       setRecords(data.data || []);
     } catch (err) {
-      setRecordsError(err instanceof Error ? err.message : "An error occurred");
+      setRecordsError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setRecordsLoading(false);
     }
@@ -183,7 +185,8 @@ export default function CollectionDetailPage() {
   const hasEncryptedFields = () => {
     if (!collection?.schema?.items?.properties) return false;
     return Object.values(collection.schema.items.properties).some(
-      (property: any) => property.type === "object" && property.properties?.["%share"]
+      (property: any) =>
+        property.type === 'object' && property.properties?.['%share']
     );
   };
 
@@ -198,25 +201,27 @@ export default function CollectionDetailPage() {
 
     // Handle encrypted fields
     const isEncrypted =
-      property.type === "object" && property.properties?.["%share"];
+      property.type === 'object' && property.properties?.['%share'];
     if (isEncrypted) {
       if (!showEncryptedData) {
-        return <span className="text-nillion-text-secondary font-mono">***</span>;
+        return (
+          <span className="text-nillion-text-secondary font-mono">***</span>
+        );
       }
       // When showing encrypted data, display the actual decrypted value
       // The value here is the decrypted content, not an object
-      if (typeof value === "string") {
+      if (typeof value === 'string') {
         const stringValue = String(value);
         if (stringValue.length > 50) {
           return <span title={stringValue}>{stringValue.slice(0, 47)}...</span>;
         }
         return <span>{stringValue}</span>;
-      } else if (typeof value === "number") {
+      } else if (typeof value === 'number') {
         return <span className="font-mono">{value}</span>;
-      } else if (typeof value === "boolean") {
+      } else if (typeof value === 'boolean') {
         return (
           <span className="nillion-badge nillion-small">
-            {value ? "True" : "False"}
+            {value ? 'True' : 'False'}
           </span>
         );
       }
@@ -226,7 +231,7 @@ export default function CollectionDetailPage() {
 
     // Handle different data types
     switch (property.type) {
-      case "array":
+      case 'array':
         if (Array.isArray(value)) {
           const itemCount = value.length;
           if (itemCount === 0) {
@@ -238,35 +243,35 @@ export default function CollectionDetailPage() {
           }
 
           // Show array length and preview of first item
-          let preview = "";
+          let preview = '';
           if (itemCount > 0 && property.items) {
             const firstItem = value[0];
-            if (property.items.type === "object") {
+            if (property.items.type === 'object') {
               // For object items, show a key count or key names
-              if (firstItem && typeof firstItem === "object") {
+              if (firstItem && typeof firstItem === 'object') {
                 const keys = Object.keys(firstItem);
                 preview =
                   keys.length > 0
-                    ? ` {${keys.slice(0, 2).join(", ")}${
-                        keys.length > 2 ? "..." : ""
+                    ? ` {${keys.slice(0, 2).join(', ')}${
+                        keys.length > 2 ? '...' : ''
                       }}`
-                    : " {}";
+                    : ' {}';
               }
-            } else if (property.items.type === "string") {
+            } else if (property.items.type === 'string') {
               preview = firstItem
                 ? ` "${String(firstItem).slice(0, 20)}${
-                    String(firstItem).length > 20 ? "..." : ""
+                    String(firstItem).length > 20 ? '...' : ''
                   }"`
-                : "";
+                : '';
             } else {
-              preview = firstItem !== undefined ? ` ${String(firstItem)}` : "";
+              preview = firstItem !== undefined ? ` ${String(firstItem)}` : '';
             }
           }
 
           return (
             <span>
               <span className="nillion-badge nillion-small">
-                {itemCount} item{itemCount !== 1 ? "s" : ""}
+                {itemCount} item{itemCount !== 1 ? 's' : ''}
               </span>
               {preview && (
                 <span className="text-xs text-nillion-text-secondary ml-1">
@@ -282,8 +287,8 @@ export default function CollectionDetailPage() {
           </span>
         );
 
-      case "object":
-        if (value && typeof value === "object") {
+      case 'object':
+        if (value && typeof value === 'object') {
           const keys = Object.keys(value);
           if (keys.length === 0) {
             return (
@@ -294,17 +299,17 @@ export default function CollectionDetailPage() {
           }
 
           // Show object with key count and key names
-          const keyPreview = keys.slice(0, 3).join(", ");
+          const keyPreview = keys.slice(0, 3).join(', ');
           const hasMore = keys.length > 3;
 
           return (
             <span>
               <span className="nillion-badge nillion-small">
-                {keys.length} field{keys.length !== 1 ? "s" : ""}
+                {keys.length} field{keys.length !== 1 ? 's' : ''}
               </span>
               <span className="text-xs text-nillion-text-secondary ml-1">
                 {keyPreview}
-                {hasMore ? "..." : ""}
+                {hasMore ? '...' : ''}
               </span>
             </span>
           );
@@ -315,18 +320,18 @@ export default function CollectionDetailPage() {
           </span>
         );
 
-      case "boolean":
+      case 'boolean':
         return (
           <span className="nillion-badge nillion-small">
-            {value ? "True" : "False"}
+            {value ? 'True' : 'False'}
           </span>
         );
 
-      case "number":
-      case "integer":
+      case 'number':
+      case 'integer':
         return <span className="font-mono">{value}</span>;
 
-      case "string":
+      case 'string':
       default:
         const stringValue = String(value);
         if (stringValue.length > 50) {
@@ -339,7 +344,7 @@ export default function CollectionDetailPage() {
   const handleDeleteCollection = async () => {
     if (
       !confirm(
-        "Are you sure you want to delete this entire collection? This action cannot be undone."
+        'Are you sure you want to delete this entire collection? This action cannot be undone.'
       )
     ) {
       return;
@@ -347,35 +352,35 @@ export default function CollectionDetailPage() {
 
     try {
       const response = await apiFetch(`/api/collections/${collectionId}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || "Failed to delete collection");
+        throw new Error(data.error || 'Failed to delete collection');
       }
 
       addNotification({
-        type: "success",
-        title: "Collection deleted",
+        type: 'success',
+        title: 'Collection deleted',
         message: `Collection "${collection?.name}" has been deleted successfully.`,
       });
 
       // Redirect to collections list
-      router.push("/collections");
+      router.push('/collections');
     } catch (err) {
       addNotification({
-        type: "error",
-        title: "Delete failed",
+        type: 'error',
+        title: 'Delete failed',
         message:
-          err instanceof Error ? err.message : "Failed to delete collection",
+          err instanceof Error ? err.message : 'Failed to delete collection',
       });
     }
   };
 
   const handleDelete = async (recordId: string) => {
-    if (!confirm("Are you sure you want to delete this record?")) {
+    if (!confirm('Are you sure you want to delete this record?')) {
       return;
     }
 
@@ -384,28 +389,28 @@ export default function CollectionDetailPage() {
         `/api/data/${collectionId}?filter=${encodeURIComponent(
           JSON.stringify({ _id: recordId })
         )}`,
-        { method: "DELETE" }
+        { method: 'DELETE' }
       );
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || "Failed to delete record");
+        throw new Error(data.error || 'Failed to delete record');
       }
 
       addNotification({
-        type: "success",
-        title: "Record deleted",
-        message: "The record has been successfully deleted",
+        type: 'success',
+        title: 'Record deleted',
+        message: 'The record has been successfully deleted',
       });
 
       await refreshData();
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to delete record";
+        err instanceof Error ? err.message : 'Failed to delete record';
       addNotification({
-        type: "error",
-        title: "Delete failed",
+        type: 'error',
+        title: 'Delete failed',
         message: errorMessage,
       });
     }
@@ -428,7 +433,7 @@ export default function CollectionDetailPage() {
         <div className="text-center">
           <h1 className="mb-4">Error</h1>
           <p className="text-nillion-text-secondary mb-4">{error}</p>
-          <button onClick={() => router.push("/collections")}>
+          <button onClick={() => router.push('/collections')}>
             Back to Collections
           </button>
         </div>
@@ -441,7 +446,7 @@ export default function CollectionDetailPage() {
       <div className="min-h-full flex items-center justify-center">
         <div className="text-center">
           <h1 className="mb-6">Collection Not Found</h1>
-          <button onClick={() => router.push("/collections")}>
+          <button onClick={() => router.push('/collections')}>
             Back to Collections
           </button>
         </div>
@@ -467,9 +472,9 @@ export default function CollectionDetailPage() {
                     onClick={() => {
                       navigator.clipboard.writeText(collection._id);
                       addNotification({
-                        type: "success",
-                        title: "ID copied",
-                        message: "Collection ID has been copied to clipboard",
+                        type: 'success',
+                        title: 'ID copied',
+                        message: 'Collection ID has been copied to clipboard',
                         duration: 2000,
                       });
                     }}
@@ -491,6 +496,12 @@ export default function CollectionDetailPage() {
                   View Schema
                 </button>
                 <button
+                  onClick={() => setShowExampleModal(true)}
+                  className="nillion-button-outline nillion-small"
+                >
+                  Example Record Payload
+                </button>
+                <button
                   onClick={handleDeleteCollection}
                   className="nillion-button-outline nillion-small"
                 >
@@ -509,7 +520,7 @@ export default function CollectionDetailPage() {
                   <div className="text-sm font-medium">
                     {metadata.firstWrite
                       ? new Date(metadata.firstWrite).toLocaleDateString()
-                      : "Unknown"}
+                      : 'Unknown'}
                   </div>
                 </div>
                 <div>
@@ -519,7 +530,7 @@ export default function CollectionDetailPage() {
                   <div className="text-sm font-medium">
                     {metadata.lastWrite
                       ? new Date(metadata.lastWrite).toLocaleDateString()
-                      : "Never"}
+                      : 'Never'}
                   </div>
                 </div>
                 <div>
@@ -551,15 +562,19 @@ export default function CollectionDetailPage() {
                 disabled={recordsLoading}
                 className="nillion-button-outline"
               >
-                {recordsLoading ? "Loading..." : "Refresh"}
+                {recordsLoading ? 'Loading...' : 'Refresh'}
               </button>
               {hasEncryptedFields() && (
                 <button
                   onClick={() => setShowEncryptedData(!showEncryptedData)}
                   className="nillion-button-outline"
-                  title={showEncryptedData ? "Hide encrypted data" : "Show encrypted data"}
+                  title={
+                    showEncryptedData
+                      ? 'Hide encrypted data'
+                      : 'Show encrypted data'
+                  }
                 >
-                  {showEncryptedData ? "🔒 Hide" : "🔓 Show"}
+                  {showEncryptedData ? '🔒 Hide' : '🔓 Show'}
                 </button>
               )}
               <button
@@ -614,16 +629,16 @@ export default function CollectionDetailPage() {
                       </th>
                       {/* Dynamic columns for other fields */}
                       {Object.entries(collection.schema.items.properties)
-                        .filter(([fieldName]) => fieldName !== "_id")
+                        .filter(([fieldName]) => fieldName !== '_id')
                         .map(([fieldName, property]) => (
                           <th
                             key={fieldName}
                             className="px-3 py-2 text-left text-xs font-medium text-nillion-text-secondary uppercase tracking-wider whitespace-nowrap font-heading"
                           >
                             {fieldName}
-                            {(property as SchemaProperty).type === "object" &&
+                            {(property as SchemaProperty).type === 'object' &&
                               (property as SchemaProperty).properties?.[
-                                "%share"
+                                '%share'
                               ] && <span className="ml-1">🔒</span>}
                           </th>
                         ))}
@@ -641,11 +656,11 @@ export default function CollectionDetailPage() {
                       >
                         {/* Sticky ID cell */}
                         <td className="sticky left-0 z-10 bg-nillion-bg px-3 py-2 text-sm font-mono text-xs border-r border-nillion-border">
-                          {record._id || "N/A"}
+                          {record._id || 'N/A'}
                         </td>
                         {/* Dynamic cells for other fields */}
                         {Object.entries(collection.schema.items.properties)
-                          .filter(([fieldName]) => fieldName !== "_id")
+                          .filter(([fieldName]) => fieldName !== '_id')
                           .map(([fieldName, property]) => {
                             const value = record[fieldName];
 
@@ -734,6 +749,21 @@ export default function CollectionDetailPage() {
           data={collection.schema}
           isOpen={showSchemaModal}
           onClose={() => setShowSchemaModal(false)}
+        />
+      )}
+
+      {/* Example Record Modal */}
+      {collection && (
+        <JsonModal
+          title="Example Record Payload"
+          subtitle={`Use this record data payload structure with SecretVaultBuilderClient.createStandardData() to add a new record to the "${collection.name}" collection`}
+          data={[generateExampleRecord(collection.schema)]}
+          isOpen={showExampleModal}
+          onClose={() => setShowExampleModal(false)}
+          link={{
+            text: 'View SecretVaults SDK documentation →',
+            href: 'https://docs.nillion.com/build/private-storage/secretvaults',
+          }}
         />
       )}
     </div>
