@@ -7,6 +7,7 @@ import AddDataModal from '@/components/AddDataModal';
 import ViewRecordModal from '@/components/ViewRecordModal';
 import EditDataModal from '@/components/EditDataModal';
 import JsonModal from '@/components/JsonModal';
+import Tooltip from '@/components/Tooltip';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { apiFetch } from '@/lib/api-client';
 import { generateExampleRecord } from '@/lib/schema-utils';
@@ -577,12 +578,25 @@ export default function CollectionDetailPage() {
                   {showEncryptedData ? '🔒 Hide' : '🔓 Show'}
                 </button>
               )}
-              <button
-                onClick={() => setShowAddDataModal(true)}
-                data-umami-event="create-record"
+              <Tooltip
+                content="Cannot modify user-owned records"
+                disabled={collection?.type === 'owned'}
               >
-                Add Data
-              </button>
+                <button
+                  onClick={() =>
+                    collection?.type !== 'owned' && setShowAddDataModal(true)
+                  }
+                  data-umami-event="create-record"
+                  className={
+                    collection?.type === 'owned'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }
+                  disabled={collection?.type === 'owned'}
+                >
+                  Add Data
+                </button>
+              </Tooltip>
             </div>
           </div>
 
@@ -610,12 +624,25 @@ export default function CollectionDetailPage() {
               <p className="text-sm text-nillion-text-secondary mb-3">
                 This collection doesn't contain any records yet.
               </p>
-              <button
-                onClick={() => setShowAddDataModal(true)}
-                data-umami-event="create-record"
+              <Tooltip
+                content="Cannot modify user-owned records"
+                disabled={collection?.type === 'owned'}
               >
-                Add First Record
-              </button>
+                <button
+                  onClick={() =>
+                    collection?.type !== 'owned' && setShowAddDataModal(true)
+                  }
+                  data-umami-event="create-record"
+                  className={
+                    collection?.type === 'owned'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }
+                  disabled={collection?.type === 'owned'}
+                >
+                  Add First Record
+                </button>
+              </Tooltip>
             </div>
           ) : (
             <div className="relative overflow-hidden border border-nillion-border rounded-lg">
@@ -686,21 +713,45 @@ export default function CollectionDetailPage() {
                             >
                               👁️
                             </button>
-                            <button
-                              onClick={() => handleEdit(record)}
-                              className="nillion-button-secondary nillion-small"
-                              title="Edit record"
+                            <Tooltip
+                              content="Cannot modify user-owned records"
+                              disabled={collection?.type === 'owned'}
                             >
-                              ✏️
-                            </button>
-                            <button
-                              onClick={() => handleDelete(record._id)}
-                              data-umami-event="delete-record"
-                              className="nillion-button-secondary nillion-small"
-                              title="Delete record"
+                              <button
+                                onClick={() =>
+                                  collection?.type !== 'owned' &&
+                                  handleEdit(record)
+                                }
+                                className={`nillion-button-secondary nillion-small ${
+                                  collection?.type === 'owned'
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : ''
+                                }`}
+                                disabled={collection?.type === 'owned'}
+                              >
+                                ✏️
+                              </button>
+                            </Tooltip>
+                            <Tooltip
+                              content="Cannot modify user-owned records"
+                              disabled={collection?.type === 'owned'}
                             >
-                              🗑️
-                            </button>
+                              <button
+                                onClick={() =>
+                                  collection?.type !== 'owned' &&
+                                  handleDelete(record._id)
+                                }
+                                data-umami-event="delete-record"
+                                className={`nillion-button-secondary nillion-small ${
+                                  collection?.type === 'owned'
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : ''
+                                }`}
+                                disabled={collection?.type === 'owned'}
+                              >
+                                🗑️
+                              </button>
+                            </Tooltip>
                           </div>
                         </td>
                       </tr>

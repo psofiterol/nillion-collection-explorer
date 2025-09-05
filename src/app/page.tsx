@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
   const router = useRouter();
@@ -15,26 +15,26 @@ export default function HomePage() {
               <div className="h-px bg-gradient-to-r from-transparent via-nillion-border to-transparent"></div>
             </div>
             <p className="text-xl mb-12 leading-relaxed max-w-3xl mx-auto text-nillion-text-secondary">
-              Builder tools for creating and managing{" "}
+              Builder tools for creating and managing{' '}
               <a
                 href="https://docs.nillion.com/build/private-storage/overview"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Nillion Private Storage
-              </a>{" "}
+              </a>{' '}
               schemas, collections, and records.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <button
-                onClick={() => router.push("/collections")}
+                onClick={() => router.push('/collections')}
                 className="nillion-button-outline nillion-large"
               >
                 View Collections →
               </button>
               <button
-                onClick={() => router.push("/create-collection")}
+                onClick={() => router.push('/create-collection')}
                 className="nillion-large"
               >
                 Create Collection Schema
@@ -59,7 +59,7 @@ export default function HomePage() {
                   <li>Live schema preview</li>
                 </ul>
                 <button
-                  onClick={() => router.push("/create-collection")}
+                  onClick={() => router.push('/create-collection')}
                   className="w-full"
                 >
                   Start Building →
@@ -76,7 +76,7 @@ export default function HomePage() {
                   <li>Faster for complex structures</li>
                 </ul>
                 <button
-                  onClick={() => router.push("/create-collection?tab=upload")}
+                  onClick={() => router.push('/create-collection?tab=upload')}
                   className="w-full"
                 >
                   Upload Schema →
@@ -104,16 +104,16 @@ export default function HomePage() {
               </div>
 
               <div className="text-center space-y-6">
-                <div className="text-6xl mb-8">🚧</div>
+                <div className="text-6xl mb-8">👤</div>
                 <h3>User Owned Collections</h3>
                 <div className="w-16 h-px bg-nillion-border mx-auto"></div>
                 <div className="space-y-4 text-nillion-text-secondary leading-relaxed">
-                  <p>
-                    <strong>🚧 Support coming soon! 🚧</strong>
-                  </p>
-                  <p>Store user-owned private data</p>
+                  <p>Create collections with data that is owned by users</p>
                   <p>Each document has individual ACLs</p>
                   <p>Users control access permissions</p>
+                  <p>
+                    Read user-owned data if the user has given you read-access
+                  </p>
                 </div>
               </div>
             </div>

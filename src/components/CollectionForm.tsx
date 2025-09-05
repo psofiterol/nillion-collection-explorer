@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Collection, SchemaProperty } from "@/types";
-import { useNotifications } from "@/contexts/NotificationContext";
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Collection, SchemaProperty } from '@/types';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 interface CollectionFormProps {
   onSubmit: (
     collection: Omit<
       Collection,
-      "_id" | "createdAt" | "updatedAt" | "description"
+      '_id' | 'createdAt' | 'updatedAt' | 'description'
     >
   ) => Promise<void>;
   onCancel: () => void;
@@ -19,7 +19,7 @@ interface CollectionFormProps {
 interface FieldDefinition {
   id: string;
   name: string;
-  type: "string" | "number" | "integer" | "boolean" | "object" | "array";
+  type: 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array';
   required: boolean;
   isSecret: boolean;
   description: string;
@@ -46,45 +46,45 @@ export default function CollectionForm({
   const { addNotification } = useNotifications();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<"build" | "upload">("build");
-  const [name, setName] = useState("");
-  const [type, setType] = useState<"standard" | "owned">("standard");
+  const [activeTab, setActiveTab] = useState<'build' | 'upload'>('build');
+  const [name, setName] = useState('');
+  const [type, setType] = useState<'standard' | 'owned'>('standard');
   const [fields, setFields] = useState<FieldDefinition[]>([
     {
-      id: "field-0",
-      name: "_id",
-      type: "string",
+      id: 'field-0',
+      name: '_id',
+      type: 'string',
       required: true,
       isSecret: false,
-      description: "Unique identifier",
+      description: 'Unique identifier',
     },
   ]);
   const [showSchemaPreview, setShowSchemaPreview] = useState(false);
-  const [jsonSchema, setJsonSchema] = useState("");
+  const [jsonSchema, setJsonSchema] = useState('');
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [expandedFields, setExpandedFields] = useState<Set<string>>(new Set());
 
   // Sync active tab with URL params
   useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab === "upload") {
-      setActiveTab("upload");
+    const tab = searchParams.get('tab');
+    if (tab === 'upload') {
+      setActiveTab('upload');
     } else {
-      setActiveTab("build"); // Default to build
+      setActiveTab('build'); // Default to build
     }
   }, [searchParams]);
 
   // Update URL when tab changes
-  const handleTabChange = (tab: "build" | "upload") => {
+  const handleTabChange = (tab: 'build' | 'upload') => {
     setActiveTab(tab);
     const params = new URLSearchParams(searchParams.toString());
-    if (tab === "upload") {
-      params.set("tab", "upload");
+    if (tab === 'upload') {
+      params.set('tab', 'upload');
     } else {
-      params.delete("tab"); // Remove param for default build tab
+      params.delete('tab'); // Remove param for default build tab
     }
     const queryString = params.toString();
-    router.replace(`/create-collection${queryString ? `?${queryString}` : ""}`);
+    router.replace(`/create-collection${queryString ? `?${queryString}` : ''}`);
   };
 
   // Helper to generate unique IDs
@@ -107,11 +107,11 @@ export default function CollectionForm({
   const addField = (parentPath?: string) => {
     const newField: FieldDefinition = {
       id: generateFieldId(),
-      name: "",
-      type: "string",
+      name: '',
+      type: 'string',
       required: false,
       isSecret: false,
-      description: "",
+      description: '',
       parentPath,
     };
 
@@ -171,19 +171,19 @@ export default function CollectionForm({
         const updatedField = { ...field, ...updates };
 
         // If changing to object type, initialize properties
-        if (updates.type === "object" && !updatedField.properties) {
+        if (updates.type === 'object' && !updatedField.properties) {
           updatedField.properties = [];
         }
 
         // If changing to array type, initialize items
-        if (updates.type === "array" && !updatedField.items) {
+        if (updates.type === 'array' && !updatedField.items) {
           updatedField.items = {
             id: generateFieldId(),
-            name: "item",
-            type: "string",
+            name: 'item',
+            type: 'string',
             required: false,
             isSecret: false,
-            description: "",
+            description: '',
             parentPath: updatedField.id,
           };
         }
@@ -199,19 +199,19 @@ export default function CollectionForm({
         const updatedItems = { ...field.items, ...updates };
 
         // If changing array item to object type, initialize properties
-        if (updates.type === "object" && !updatedItems.properties) {
+        if (updates.type === 'object' && !updatedItems.properties) {
           updatedItems.properties = [];
         }
 
         // If changing array item to array type, initialize nested items
-        if (updates.type === "array" && !updatedItems.items) {
+        if (updates.type === 'array' && !updatedItems.items) {
           updatedItems.items = {
             id: generateFieldId(),
-            name: "item",
-            type: "string",
+            name: 'item',
+            type: 'string',
             required: false,
             isSecret: false,
-            description: "",
+            description: '',
             parentPath: updatedItems.id,
           };
         }
@@ -245,7 +245,7 @@ export default function CollectionForm({
     parentFields?: FieldDefinition[]
   ): FieldDefinition[] => {
     // Don't remove _id field
-    if (fieldId === "field-0") return parentFields || fields;
+    if (fieldId === 'field-0') return parentFields || fields;
 
     const fieldsToUpdate = parentFields || fields;
 
@@ -272,13 +272,13 @@ export default function CollectionForm({
     if (field.isSecret) {
       // Secret fields use the %share pattern
       return {
-        type: "object",
+        type: 'object',
         properties: {
-          "%share": {
-            type: "string", // Secret fields are always strings
+          '%share': {
+            type: 'string', // Secret fields are always strings
           },
         },
-        required: ["%share"],
+        required: ['%share'],
         ...(field.description && { description: field.description }),
       };
     }
@@ -289,17 +289,17 @@ export default function CollectionForm({
     };
 
     // Add constraints based on type
-    if (field.type === "string") {
+    if (field.type === 'string') {
       if (field.format) baseProperty.format = field.format;
       if (field.coerce) baseProperty.coerce = field.coerce;
     }
 
-    if (field.type === "number" || field.type === "integer") {
+    if (field.type === 'number' || field.type === 'integer') {
       if (field.minimum !== undefined) baseProperty.minimum = field.minimum;
       if (field.maximum !== undefined) baseProperty.maximum = field.maximum;
     }
 
-    if (field.type === "array") {
+    if (field.type === 'array') {
       if (field.minItems !== undefined) baseProperty.minItems = field.minItems;
       if (field.maxItems !== undefined) baseProperty.maxItems = field.maxItems;
       if (field.items) {
@@ -307,7 +307,7 @@ export default function CollectionForm({
       }
     }
 
-    if (field.type === "object" && field.properties) {
+    if (field.type === 'object' && field.properties) {
       baseProperty.properties = {};
       const objectRequired: string[] = [];
 
@@ -343,14 +343,14 @@ export default function CollectionForm({
       const parsedSchema = JSON.parse(jsonSchema);
 
       // Validate $schema field
-      if (parsedSchema.$schema !== "http://json-schema.org/draft-07/schema#") {
+      if (parsedSchema.$schema !== 'http://json-schema.org/draft-07/schema#') {
         throw new Error(
           'Schema must have "$schema": "http://json-schema.org/draft-07/schema#"'
         );
       }
 
       // Validate type is array
-      if (parsedSchema.type !== "array") {
+      if (parsedSchema.type !== 'array') {
         throw new Error('Schema "type" must be "array"');
       }
 
@@ -359,7 +359,7 @@ export default function CollectionForm({
         throw new Error('Schema must have "items" property');
       }
 
-      if (parsedSchema.items.type !== "object") {
+      if (parsedSchema.items.type !== 'object') {
         throw new Error('Schema items "type" must be "object"');
       }
 
@@ -375,7 +375,7 @@ export default function CollectionForm({
       if (
         !parsedSchema.items.required ||
         !Array.isArray(parsedSchema.items.required) ||
-        !parsedSchema.items.required.includes("_id")
+        !parsedSchema.items.required.includes('_id')
       ) {
         throw new Error('Schema items must have "_id" in required array');
       }
@@ -388,11 +388,11 @@ export default function CollectionForm({
       });
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Invalid JSON format";
+        error instanceof Error ? error.message : 'Invalid JSON format';
       setJsonError(errorMessage);
       addNotification({
-        type: "error",
-        title: "Invalid Schema Format",
+        type: 'error',
+        title: 'Invalid Schema Format',
         message: `Schema format is incorrect: ${errorMessage}`,
       });
     }
@@ -402,17 +402,17 @@ export default function CollectionForm({
     e.preventDefault();
 
     if (!name.trim()) {
-      alert("Collection name is required");
+      alert('Collection name is required');
       return;
     }
 
-    if (activeTab === "upload") {
+    if (activeTab === 'upload') {
       handleJsonUpload();
       return;
     }
 
     if (!validateFieldNames(fields)) {
-      alert("All fields must have a name");
+      alert('All fields must have a name');
       return;
     }
 
@@ -428,10 +428,10 @@ export default function CollectionForm({
     });
 
     const schema = {
-      $schema: "http://json-schema.org/draft-07/schema#",
-      type: "array" as const,
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'array' as const,
       items: {
-        type: "object" as const,
+        type: 'object' as const,
         properties,
         required,
       },
@@ -452,14 +452,14 @@ export default function CollectionForm({
     const indentClass =
       depth > 0
         ? `ml-${Math.min(depth * 4, 16)} border-l-2 border-nillion-border pl-4`
-        : "";
+        : '';
 
     return (
       <div
         key={field.id}
         className={`relative p-4 border border-nillion-border rounded-lg ${indentClass}`}
       >
-        {field.id !== "field-0" && (
+        {field.id !== 'field-0' && (
           <button
             type="button"
             onClick={() => removeField(field.id)}
@@ -476,7 +476,7 @@ export default function CollectionForm({
               value={field.name}
               onChange={(e) => updateField(field.id, { name: e.target.value })}
               className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
-              disabled={field.id === "field-0"} // _id field is readonly
+              disabled={field.id === 'field-0'} // _id field is readonly
             />
           </div>
 
@@ -495,7 +495,7 @@ export default function CollectionForm({
                 updateField(field.id, { type: e.target.value as any })
               }
               className="w-full px-3 py-2 border-2 border-nillion-border rounded-none text-sm focus:outline-none focus:border-nillion-primary  transition-all duration-300"
-              disabled={field.id === "field-0" || field.isSecret} // _id type is locked to string, and secret fields must be string
+              disabled={field.id === 'field-0' || field.isSecret} // _id type is locked to string, and secret fields must be string
             >
               <option value="string">String</option>
               <option value="number">Number</option>
@@ -515,7 +515,7 @@ export default function CollectionForm({
                   updateField(field.id, { required: e.target.checked })
                 }
                 className="mr-2"
-                disabled={field.id === "field-0"} // _id is always required
+                disabled={field.id === 'field-0'} // _id is always required
               />
               <span className="text-sm">Required</span>
             </label>
@@ -525,11 +525,11 @@ export default function CollectionForm({
                 type="checkbox"
                 checked={field.isSecret}
                 onChange={(e) => {
-                  if (e.target.checked && field.type !== "string") {
+                  if (e.target.checked && field.type !== 'string') {
                     // Automatically convert to string when marking as secret
                     updateField(field.id, {
                       isSecret: true,
-                      type: "string",
+                      type: 'string',
                     });
                   } else {
                     updateField(field.id, { isSecret: e.target.checked });
@@ -537,13 +537,13 @@ export default function CollectionForm({
                 }}
                 className="mr-2"
                 disabled={
-                  field.id === "field-0" ||
-                  field.type === "object" ||
-                  field.type === "array"
+                  field.id === 'field-0' ||
+                  field.type === 'object' ||
+                  field.type === 'array'
                 } // Objects/arrays can't be directly secret
               />
               <span className="text-sm">Secret</span>
-              {field.type !== "string" && !field.isSecret && (
+              {field.type !== 'string' && !field.isSecret && (
                 <span
                   className="text-xs text-nillion-text-secondary ml-1"
                   title="Secret fields must be strings"
@@ -559,7 +559,7 @@ export default function CollectionForm({
               className="mt-2 nillion-button-ghost nillion-small flex items-center w-auto"
             >
               <span className="mr-1">
-                {expandedFields.has(field.id) ? "▼" : "▶"}
+                {expandedFields.has(field.id) ? '▼' : '▶'}
               </span>
               <span>Description details</span>
             </button>
@@ -586,14 +586,14 @@ export default function CollectionForm({
 
             {/* Type-specific constraints */}
             <div className="mt-3">
-              {field.type === "string" && field.id !== "field-0" && (
+              {field.type === 'string' && field.id !== 'field-0' && (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium mb-1">
                       Format
                     </label>
                     <select
-                      value={field.format || ""}
+                      value={field.format || ''}
                       onChange={(e) =>
                         updateField(field.id, {
                           format: e.target.value || undefined,
@@ -627,7 +627,7 @@ export default function CollectionForm({
                 </div>
               )}
 
-              {(field.type === "number" || field.type === "integer") && (
+              {(field.type === 'number' || field.type === 'integer') && (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium mb-1">
@@ -635,7 +635,7 @@ export default function CollectionForm({
                     </label>
                     <input
                       type="number"
-                      value={field.minimum ?? ""}
+                      value={field.minimum ?? ''}
                       onChange={(e) =>
                         updateField(field.id, {
                           minimum: e.target.value
@@ -653,7 +653,7 @@ export default function CollectionForm({
                     </label>
                     <input
                       type="number"
-                      value={field.maximum ?? ""}
+                      value={field.maximum ?? ''}
                       onChange={(e) =>
                         updateField(field.id, {
                           maximum: e.target.value
@@ -668,7 +668,7 @@ export default function CollectionForm({
                 </div>
               )}
 
-              {field.type === "array" && (
+              {field.type === 'array' && (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium mb-1">
@@ -677,7 +677,7 @@ export default function CollectionForm({
                     <input
                       type="number"
                       min="0"
-                      value={field.minItems ?? ""}
+                      value={field.minItems ?? ''}
                       onChange={(e) =>
                         updateField(field.id, {
                           minItems: e.target.value
@@ -696,7 +696,7 @@ export default function CollectionForm({
                     <input
                       type="number"
                       min="0"
-                      value={field.maxItems ?? ""}
+                      value={field.maxItems ?? ''}
                       onChange={(e) =>
                         updateField(field.id, {
                           maxItems: e.target.value
@@ -715,14 +715,14 @@ export default function CollectionForm({
         )}
 
         {field.isSecret &&
-          field.type !== "object" &&
-          field.type !== "array" && (
+          field.type !== 'object' &&
+          field.type !== 'array' && (
             <div className="mt-2 p-2 nillion-warning-box border border-nillion-warning rounded text-sm">
               <p className="text-nillion-warning">
                 🔒 This field will be encrypted using secret sharing across
                 multiple nodes.
               </p>
-              {field.type !== "string" && (
+              {field.type !== 'string' && (
                 <p className="text-nillion-warning mt-1 font-medium">
                   ⚠️ Note: Secret fields must be strings. This field's type has
                   been automatically converted to string.
@@ -732,7 +732,7 @@ export default function CollectionForm({
           )}
 
         {/* Array items configuration */}
-        {field.type === "array" && field.items && (
+        {field.type === 'array' && field.items && (
           <div className="mt-4">
             <h4 className="text-sm font-medium mb-2">
               Array Item Configuration:
@@ -745,7 +745,7 @@ export default function CollectionForm({
         )}
 
         {/* Object properties */}
-        {field.type === "object" && (
+        {field.type === 'object' && (
           <div className="mt-4">
             <div className="flex justify-between items-center mb-2">
               <h4 className="text-sm font-medium">Object Properties:</h4>
@@ -797,18 +797,18 @@ export default function CollectionForm({
             </label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as "standard" | "owned")}
+              onChange={(e) => setType(e.target.value as 'standard' | 'owned')}
               className="w-full px-4 py-3 border-2 border-nillion-border rounded-none focus:outline-none focus:border-nillion-primary  font-light tracking-wide transition-all duration-300"
             >
               <option value="standard">Standard</option>
-              <option value="owned" disabled>
+              <option value="owned">
                 Owned (Individual ownership with ACL)
               </option>
             </select>
             <p className="text-sm text-nillion-text-secondary mt-1">
-              {type === "standard"
-                ? "Builder managed collections for application data"
-                : "Users own individual documents with granular permissions"}
+              {type === 'standard'
+                ? 'Builder managed collections for application data'
+                : 'Users own individual documents with granular permissions'}
             </p>
           </div>
         </div>
@@ -819,22 +819,22 @@ export default function CollectionForm({
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => handleTabChange("build")}
+                onClick={() => handleTabChange('build')}
                 className={`font-heading text-base tracking-wide transition-all duration-300 ${
-                  activeTab === "build"
-                    ? "nillion-button-primary"
-                    : "nillion-button-ghost"
+                  activeTab === 'build'
+                    ? 'nillion-button-primary'
+                    : 'nillion-button-ghost'
                 }`}
               >
                 Build Custom Schema in UI
               </button>
               <button
                 type="button"
-                onClick={() => handleTabChange("upload")}
+                onClick={() => handleTabChange('upload')}
                 className={`font-heading text-base tracking-wide transition-all duration-300 ${
-                  activeTab === "upload"
-                    ? "nillion-button-primary"
-                    : "nillion-button-ghost"
+                  activeTab === 'upload'
+                    ? 'nillion-button-primary'
+                    : 'nillion-button-ghost'
                 }`}
               >
                 Upload JSON Schema
@@ -842,7 +842,7 @@ export default function CollectionForm({
             </div>
           </div>
 
-          {activeTab === "build" ? (
+          {activeTab === 'build' ? (
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-light tracking-wide text-nillion-text">
@@ -853,7 +853,7 @@ export default function CollectionForm({
                   onClick={() => setShowSchemaPreview(!showSchemaPreview)}
                   className="nillion-button-outline nillion-small"
                 >
-                  {showSchemaPreview ? "Hide Preview" : "Show Preview"}
+                  {showSchemaPreview ? 'Hide Preview' : 'Show Preview'}
                 </button>
               </div>
 
@@ -865,10 +865,10 @@ export default function CollectionForm({
                   <pre className="text-xs font-mono overflow-x-auto p-3 rounded">
                     {JSON.stringify(
                       {
-                        $schema: "http://json-schema.org/draft-07/schema#",
-                        type: "array",
+                        $schema: 'http://json-schema.org/draft-07/schema#',
+                        type: 'array',
                         items: {
-                          type: "object",
+                          type: 'object',
                           properties: Object.fromEntries(
                             fields.map((field) => [
                               field.name,
@@ -922,7 +922,7 @@ export default function CollectionForm({
   }
 }`}
                   rows={15}
-                  required={activeTab === "upload"}
+                  required={activeTab === 'upload'}
                 />
                 {jsonError && (
                   <p className="mt-2 text-sm text-nillion-text font-light">
@@ -944,9 +944,9 @@ export default function CollectionForm({
             type="submit"
             disabled={isLoading}
             data-umami-event={
-              activeTab === "build"
-                ? "create-collection-custom"
-                : "create-collection-from-json"
+              activeTab === 'build'
+                ? 'create-collection-custom'
+                : 'create-collection-from-json'
             }
             className="flex-1 nillion-button min-h-[48px] flex items-center justify-center"
           >
@@ -975,7 +975,7 @@ export default function CollectionForm({
                 Creating Collection...
               </span>
             ) : (
-              "Create Collection"
+              'Create Collection'
             )}
           </button>
           <button

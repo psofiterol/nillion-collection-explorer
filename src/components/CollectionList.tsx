@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Collection } from "@/types";
-import { apiFetch } from "@/lib/api-client";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Collection } from '@/types';
+import { apiFetch } from '@/lib/api-client';
 
 interface CollectionListProps {
   refreshTrigger?: number;
@@ -16,7 +16,10 @@ export default function CollectionList({
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchFilter, setSearchFilter] = useState("");
+  const [searchFilter, setSearchFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'owned' | 'standard'
+  >('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
@@ -25,16 +28,16 @@ export default function CollectionList({
       setLoading(true);
       setError(null);
 
-      const response = await apiFetch("/api/collections");
+      const response = await apiFetch('/api/collections');
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || "Failed to fetch collections");
+        throw new Error(data.error || 'Failed to fetch collections');
       }
 
       setCollections(data.collections || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,7 @@ export default function CollectionList({
 
     if (
       !confirm(
-        "Are you sure you want to delete this collection? This action cannot be undone."
+        'Are you sure you want to delete this collection? This action cannot be undone.'
       )
     ) {
       return;
@@ -60,13 +63,13 @@ export default function CollectionList({
 
     try {
       const response = await apiFetch(`/api/collections/${collectionId}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || "Failed to delete collection");
+        throw new Error(data.error || 'Failed to delete collection');
       }
 
       // Refresh the list
@@ -74,14 +77,20 @@ export default function CollectionList({
     } catch (err) {
       alert(
         `Failed to delete collection: ${
-          err instanceof Error ? err.message : "Unknown error"
+          err instanceof Error ? err.message : 'Unknown error'
         }`
       );
     }
   };
 
-  // Filter collections based on search input
+  // Filter collections based on search input and status
   const filteredCollections = collections.filter((collection) => {
+    // Apply status filter
+    if (statusFilter !== 'all' && collection.type !== statusFilter) {
+      return false;
+    }
+
+    // Apply search filter
     if (!searchFilter.trim()) return true;
 
     const searchTerm = searchFilter.toLowerCase();
@@ -94,6 +103,12 @@ export default function CollectionList({
   // Reset to page 1 when search filter changes
   const handleSearchChange = (value: string) => {
     setSearchFilter(value);
+    setCurrentPage(1);
+  };
+
+  // Reset to page 1 when status filter changes
+  const handleStatusChange = (value: 'all' | 'owned' | 'standard') => {
+    setStatusFilter(value);
     setCurrentPage(1);
   };
 
@@ -152,12 +167,12 @@ export default function CollectionList({
             Nillion.
           </p>
           <div className="space-y-4">
-            <button onClick={() => router.push("/create-collection")}>
+            <button onClick={() => router.push('/create-collection')}>
               Create Your First Collection
             </button>
             <div>
               <button
-                onClick={() => router.push("/")}
+                onClick={() => router.push('/')}
                 className="nillion-button-ghost"
               >
                 ← Back to Home
@@ -208,8 +223,8 @@ export default function CollectionList({
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-4 border-t border-nillion-border">
             <p className="text-sm text-nillion-text-secondary">
-              Showing {startIndex + 1} to{" "}
-              {Math.min(endIndex, filteredCollections.length)} of{" "}
+              Showing {startIndex + 1} to{' '}
+              {Math.min(endIndex, filteredCollections.length)} of{' '}
               {filteredCollections.length} collections
             </p>
             <div className="flex items-center gap-2">
@@ -244,7 +259,7 @@ export default function CollectionList({
       {/* Collections header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h3>
-          {searchFilter ? (
+          {searchFilter || statusFilter !== 'all' ? (
             <span>
               Collections ({filteredCollections.length} of {collections.length})
             </span>
@@ -252,31 +267,48 @@ export default function CollectionList({
             <span>Your Collections ({collections.length})</span>
           )}
         </h3>
-        <button onClick={() => router.push("/create-collection")}>
+        <button onClick={() => router.push('/create-collection')}>
           Create New Collection
         </button>
       </div>
 
-      {/* Search bar */}
-      <div className="max-w-md">
-        <div className="relative">
-          <input
-            type="text"
-            value={searchFilter}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="Search by collection name or ID..."
-            className="pr-10"
-          />
-          {searchFilter && (
-            <button
-              onClick={() => handleSearchChange("")}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 nillion-button-ghost nillion-small"
-              style={{ padding: "0.25rem" }}
-              title="Clear search"
-            >
-              ✕
-            </button>
-          )}
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Search bar */}
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchFilter}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder="Search by collection name or ID..."
+              className="pr-10"
+            />
+            {searchFilter && (
+              <button
+                onClick={() => handleSearchChange('')}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 nillion-button-ghost nillion-small"
+                style={{ padding: '0.25rem' }}
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+        {/* Status filter */}
+        <div className="min-w-[150px]">
+          <select
+            value={statusFilter}
+            onChange={(e) =>
+              handleStatusChange(e.target.value as 'all' | 'owned' | 'standard')
+            }
+            className="w-full"
+          >
+            <option value="all">All Collection Types</option>
+            <option value="owned">Owned</option>
+            <option value="standard">Standard</option>
+          </select>
         </div>
       </div>
 
